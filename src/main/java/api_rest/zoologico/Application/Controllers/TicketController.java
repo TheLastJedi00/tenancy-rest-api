@@ -1,6 +1,6 @@
 package api_rest.zoologico.Application.Controllers;
 
-import api_rest.zoologico.Application.DTOs.TicketRequestDTO;
+import api_rest.zoologico.Application.DTOs.TicketDTO;
 import api_rest.zoologico.Domain.Models.Ticket;
 import api_rest.zoologico.Domain.Services.TicketService;
 import org.springframework.http.ResponseEntity;
@@ -23,35 +23,18 @@ public class TicketController {
         return ResponseEntity.ok().body(TicketService.getAll());
     }
 
-    @GetMapping("/especies")
-    public ResponseEntity<List<Ticket>> getBySpecies(@RequestParam String data) {
-        return ResponseEntity.ok().body(TicketService.getBySpecies(data));
-    }
-
-    @GetMapping("/name")
-    public ResponseEntity<List<Ticket>> getByName(@RequestParam String data) {
-        return ResponseEntity.ok().body(TicketService.getByName(data));
-    }
-
-    @GetMapping("/idade")
-    public ResponseEntity<List<Ticket>> getByAge(
-            @RequestParam Integer min,
-            @RequestParam Integer max) {
-        return ResponseEntity.ok().body(TicketService.getByAge(min, max));
-    }
-
     @GetMapping("/{id}")
     public Ticket getById(@PathVariable Long id) {
         return TicketService.getById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Ticket> create(@RequestBody TicketRequestDTO data) {
+    public ResponseEntity<Ticket> create(@RequestBody TicketDTO data) {
         return ResponseEntity.ok().body(TicketService.create(data));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Ticket> update(@PathVariable Long id, @RequestBody TicketRequestDTO data) {
+    public ResponseEntity<Ticket> update(@PathVariable Long id, @RequestBody TicketDTO data) {
         return ResponseEntity.ok().body(TicketService.update(id, data));
     }
 

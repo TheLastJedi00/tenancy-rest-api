@@ -1,10 +1,14 @@
 package api_rest.zoologico.Domain.Models;
 
 import api_rest.zoologico.Application.DTOs.TicketDTO;
+import api_rest.zoologico.Domain.Models.Enums.TicketPriority;
+import api_rest.zoologico.Domain.Models.Enums.TicketStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -15,10 +19,23 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String title;
+    private String description;
+    private LocalDateTime createdAt;
+    private LocalDateTime closedAt;
+    private TicketStatus status;
+    private TicketPriority priority;
+//    private Category category;
+//    private Technician technician;
+//    private Tenant tenant;
+    private LocalDateTime resolutionDueDate;
 
-    private String nome;
-
-    public Ticket(TicketDTO dto) {
-        this.nome = dto.nome();
+    public Ticket(TicketDTO dto, TicketStatus status) {
+        this.title = dto.title();
+        this.description = dto.description();
+        this.createdAt = dto.createdAt();
+        this.status = status;
+        this.priority = dto.priority();
+        this.resolutionDueDate = dto.resolutionDueDate();
     }
 }

@@ -1,25 +1,28 @@
 package api_rest.zoologico.Domain.Services;
 
 import api_rest.zoologico.Application.DTOs.TicketDTO;
+import api_rest.zoologico.Domain.Models.Enums.TicketStatus;
 import api_rest.zoologico.Infra.Mapper.TicketMapper;
 import api_rest.zoologico.Domain.Models.Ticket;
 import api_rest.zoologico.Domain.Repositories.TicketRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class TIcketService {
+public class TicketService {
 
     private final TicketRepository ticketRepository;
     private final TicketMapper ticketMapper;
 
-    public TIcketService(TicketRepository ticketRepository, TicketMapper ticketMapper) {
+    public TicketService(TicketRepository ticketRepository, TicketMapper ticketMapper) {
         this.ticketRepository = ticketRepository;
         this.ticketMapper = ticketMapper;
 
     }
     public Ticket getById(Long id) {
         return ticketRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Animal com ID " + id + " não encontrado."));
+                .orElseThrow(() -> new RuntimeException("Ticket com ID " + id + " não encontrado."));
     }
 
     public Ticket update(Long id, TicketDTO dto) {
@@ -34,7 +37,11 @@ public class TIcketService {
     }
 
     public Ticket create(TicketDTO dto) {
-        Ticket ticket = new Ticket(dto);
+        Ticket ticket = new Ticket(dto, TicketStatus.OPEN);
         return ticketRepository.save(ticket);
+    }
+
+    public List<Ticket> getAll() {
+        return ticketRepository.findAll();
     }
 }
