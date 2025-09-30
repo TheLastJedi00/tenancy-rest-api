@@ -8,5 +8,5 @@ import org.mapstruct.*;
 public interface TicketMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    void updateEntityFromDto(TicketDTO animalRequestDTO, @MappingTarget Ticket animal);
+    void updateEntityFromDto(TicketDTO ticketDTO, @MappingTarget Ticket ticket);
 }
