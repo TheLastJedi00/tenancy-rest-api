@@ -20,6 +20,7 @@ public class TicketService {
         this.ticketMapper = ticketMapper;
 
     }
+
     public Ticket getById(Long id) {
         return ticketRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ticket com ID " + id + " não encontrado."));
@@ -27,7 +28,6 @@ public class TicketService {
 
     public Ticket update(Long id, TicketDTO dto) {
         Ticket ticket = getById(id);
-
         ticketMapper.updateEntityFromDto(dto, ticket);
         return ticketRepository.save(ticket);
     }
