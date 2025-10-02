@@ -5,9 +5,11 @@ import ThinkDesk.Domain.Models.Enums.TicketStatus;
 import ThinkDesk.Infra.Mapper.TicketMapper;
 import ThinkDesk.Domain.Models.Ticket;
 import ThinkDesk.Domain.Repositories.TicketRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 public class TicketService {
@@ -37,11 +39,13 @@ public class TicketService {
     }
 
     public Ticket create(TicketDTO dto) {
-        Ticket ticket = new Ticket(dto, TicketStatus.OPEN);
+        Ticket ticket = ticketMapper.toEntity(dto);
+        ticket.setStatus(TicketStatus.OPEN);
+        ticket.setCreatedAt(LocalDateTime.now());
         return ticketRepository.save(ticket);
     }
 
-    public List<Ticket> getAll() {
-        return ticketRepository.findAll();
+    public Page<Ticket> getAll(Pageable pageable) {
+        return ticketRepository.findAll(pageable);
     }
 }
