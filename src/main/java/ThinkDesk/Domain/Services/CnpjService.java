@@ -2,6 +2,7 @@ package ThinkDesk.Domain.Services;
 
 import ThinkDesk.Application.DTOs.CnpjDto;
 import ThinkDesk.Infra.Exception.CnpjException;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
