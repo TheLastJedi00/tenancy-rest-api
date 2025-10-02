@@ -28,7 +28,7 @@ public class Technician {
         this.name = dto.name();
         this.email = dto.email();
         this.password = dto.password();
-        this.level = level;
+        this.level = status;
         this.active = dto.active();
         this.tenant = dto.tenant();
     }
