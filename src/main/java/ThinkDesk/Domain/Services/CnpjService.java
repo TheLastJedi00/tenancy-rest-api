@@ -1,7 +1,10 @@
 package ThinkDesk.Domain.Services;
 
 import ThinkDesk.Application.DTOs.CnpjDto;
+import ThinkDesk.Infra.Exception.CnpjException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -14,6 +17,10 @@ public class CnpjService {
     }
 
     public CnpjDto getTenantByCnpj(String cnpj){
-        return restTemplate.getForObject(url + cnpj, CnpjDto.class);
+        try {
+            return restTemplate.getForObject(url + cnpj, CnpjDto.class);
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new CnpjException("Tax ID not found: " + e);
+        }
     }
 }

@@ -23,4 +23,10 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
+
+    //Called wen CNPJ API return error 404
+    @ExceptionHandler(CnpjException.class)
+    public ResponseEntity<?> handleCnpjNotFoundException(CnpjException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }
