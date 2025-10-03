@@ -18,5 +18,5 @@ public class Status {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Tenant tenant;a
+    private Tenant tenant;
 }
