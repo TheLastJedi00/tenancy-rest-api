@@ -3,6 +3,7 @@ package ThinkDesk.Application.Controllers;
 import ThinkDesk.Application.DTOs.SlaPolicyDTO;
 import ThinkDesk.Domain.Models.SlaPolicy;
 import ThinkDesk.Domain.Services.SlaPolicyService;
+import ThinkDesk.Infra.Mapper.SlaPolicyMapper;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class SlaPolicyController {
 
     private final SlaPolicyService slaPolicyService;
+    private final SlaPolicyMapper slaPolicyMapper;
 
-    public SlaPolicyController(SlaPolicyService SlaPolicyService) {
+
+    public SlaPolicyController(SlaPolicyService SlaPolicyService, SlaPolicyMapper slaPolicyMapper) {
         this.slaPolicyService = SlaPolicyService;
+        this.slaPolicyMapper = slaPolicyMapper;
     }
 
     @GetMapping
@@ -37,7 +41,7 @@ public class SlaPolicyController {
             @PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
 
         Page<SlaPolicy> slaPolicyPage = slaPolicyService.getAllByTenant(tenantId, pageable);
-        Page<SlaPolicyDTO> responseDtoPage = slaPolicyPage.map(slaPolicyMapper::toResponseDto);
+        Page<SlaPolicyDTO> responseDtoPage = slaPolicyPage.map(slaPolicyMapper::toDto);
 
         return ResponseEntity.ok(responseDtoPage);
     }

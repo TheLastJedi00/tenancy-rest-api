@@ -11,6 +11,10 @@ public interface SlaPolicyMapper {
     @Mapping(target = "tenant", ignore = true)
     SlaPolicy toEntity(SlaPolicyDTO dto);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
+    SlaPolicyDTO toDto(SlaPolicy slaPolicy);
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "tenant", ignore = true)

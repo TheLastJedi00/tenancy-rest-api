@@ -6,6 +6,7 @@ import ThinkDesk.Domain.Models.SlaPolicy;
 import ThinkDesk.Domain.Models.Tenant;
 import ThinkDesk.Domain.Repositories.SlaPolicyRepository;
 import ThinkDesk.Domain.Repositories.TenantRepository;
+import ThinkDesk.Infra.Exception.ResourceNotFoundException;
 import ThinkDesk.Infra.Mapper.SlaPolicyMapper;
 import jakarta.persistence.EntityExistsException;
 import org.springframework.data.domain.Page;
