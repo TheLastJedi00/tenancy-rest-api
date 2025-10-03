@@ -26,7 +26,8 @@ public class Ticket {
     private TicketStatus status;
     private TicketPriority priority;
 //    private Category category;
-//    private Technician technician;
+    @ManyToOne
+    private Admin technician;
     @ManyToOne(fetch = FetchType.LAZY)
     private Tenant tenant;
     private LocalDateTime resolutionDueDate;

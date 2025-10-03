@@ -1,9 +1,6 @@
 package ThinkDesk.Domain.Models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,6 +18,9 @@ public class Admin implements UserDetails {
     private String name;
     private String login;
     private String password;
+
+    @ManyToOne
+    private Team team;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Metrics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Performance Metrics</h1>
+
+    <div style="width: 50%; margin: auto;">
+        <h2>Team Metrics (Team ID: 1)</h2>
+        <canvas id="teamMetricsChart"></canvas>
+    </div>
+
+    <div style="width: 50%; margin: auto; margin-top: 50px;">
+        <h2>Employee Metrics (Employee ID: 1)</h2>
+        <canvas id="employeeMetricsChart"></canvas>
+    </div>
+
+    <script>
+        // Fetch and display team metrics
+        fetch('/metrics/team/1')
+            .then(response => response.json())
+            .then(data => {
+                const teamCtx = document.getElementById('teamMetricsChart').getContext('2d');
+                new Chart(teamCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Resolved Tickets', 'SLA Met', 'Open Tickets'],
+                        datasets: [{
+                            label: 'Team Performance',
+                            data: [data.resolvedTickets, data.slaMet, data.openTickets],
+                            backgroundColor: [
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 99, 132, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 99, 132, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            });
+
+        // Fetch and display employee metrics
+        fetch('/metrics/employee/1')
+            .then(response => response.json())
+            .then(data => {
+                const employeeCtx = document.getElementById('employeeMetricsChart').getContext('2d');
+                new Chart(employeeCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Resolved Tickets', 'SLA Met', 'Open Tickets'],
+                        datasets: [{
+                            label: 'Employee Performance',
+                            data: [data.resolvedTickets, data.slaMet, data.openTickets],
+                            backgroundColor: [
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 99, 132, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 99, 132, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            });
+    </script>
+</body>
+</html>
