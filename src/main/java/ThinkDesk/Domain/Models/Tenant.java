@@ -1,5 +1,7 @@
 package ThinkDesk.Domain.Models;
 
+import ThinkDesk.Application.DTOs.CnpjDto;
+import ThinkDesk.Application.DTOs.TenantDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,4 +22,13 @@ public class Tenant {
     private LocalDateTime createdAt;
     private boolean active;
     private String settings; //Layout customizations JSON
+
+    public Tenant(TenantDto dto, CnpjDto data) {
+        this.tradingName = dto.tradingName();
+        this.legalName = data.razaoSocial();
+        this.taxID = dto.taxID();
+        this.createdAt = dto.createdAt();
+        this.active = true;
+        this.settings = dto.settings();
+    }
 }
