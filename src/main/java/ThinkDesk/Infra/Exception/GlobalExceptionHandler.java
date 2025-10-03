@@ -29,4 +29,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleCnpjNotFoundException(CnpjException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+
 }
