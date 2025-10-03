@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/Tickets")
+@RequestMapping("/tickets")
 public class TicketController {
 
     private final TicketService ticketService;
