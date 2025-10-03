@@ -1,5 +1,6 @@
 package ThinkDesk.Domain.Models;
 
+import ThinkDesk.Application.DTOs.TicketDTO;
 import ThinkDesk.Domain.Models.Enums.TicketPriority;
 import ThinkDesk.Domain.Models.Enums.TicketStatus;
 import jakarta.persistence.*;
@@ -20,6 +21,7 @@ public class Ticket {
     private Long id;
     private String title;
     private String description;
+    private String translatedDescription;
     private LocalDateTime createdAt;
     private LocalDateTime closedAt;
     private TicketStatus status;
@@ -31,4 +33,12 @@ public class Ticket {
     private Tenant tenant;
     private LocalDateTime resolutionDueDate;
 
+    public Ticket(TicketDTO dto, TicketStatus status) {
+        this.title = dto.title();
+        this.description = dto.description();
+        this.createdAt = dto.createdAt();
+        this.status = status;
+        this.priority = dto.priority();
+        this.resolutionDueDate = dto.resolutionDueDate();
+    }
 }

@@ -16,11 +16,12 @@ public class TicketService {
 
     private final TicketRepository ticketRepository;
     private final TicketMapper ticketMapper;
+    private final TranslationService translationService;
 
-    public TicketService(TicketRepository ticketRepository, TicketMapper ticketMapper) {
+    public TicketService(TicketRepository ticketRepository, TicketMapper ticketMapper, TranslationService translationService) {
         this.ticketRepository = ticketRepository;
         this.ticketMapper = ticketMapper;
-
+        this.translationService = translationService;
     }
 
     public Ticket getById(Long id) {
@@ -42,6 +43,10 @@ public class TicketService {
         Ticket ticket = ticketMapper.toEntity(dto);
         ticket.setStatus(TicketStatus.OPEN);
         ticket.setCreatedAt(LocalDateTime.now());
+
+        String translatedDescription = translationService.translate(ticket.getDescription());
+        ticket.setTranslatedDescription(translatedDescription);
+
         return ticketRepository.save(ticket);
     }
 
