@@ -19,4 +19,4 @@ public class Status {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Tenant tenant;
-}a
+}
