@@ -32,4 +32,5 @@ public class User {
     @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
 
+
 }

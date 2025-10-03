@@ -1,23 +1,20 @@
 package ThinkDesk.Application.DTOs;
 
 import ThinkDesk.Domain.Models.Enums.TicketPriority;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
 public record TicketDTO(
-        @NotNull
+        @NotBlank
         String title,
-        @NotNull
+        @NotBlank
         String description,
         @NotNull
-        LocalDateTime createdAt,
-        @NotNull
-        LocalDateTime closedAt,
-        @NotNull
         TicketPriority priority,
-        @NotNull
         LocalDateTime resolutionDueDate
+
 //      Category category,
 //      Technician technician,
 //      Tenant tenant
