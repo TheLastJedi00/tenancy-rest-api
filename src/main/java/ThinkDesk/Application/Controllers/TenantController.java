@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tenant")
+@RequestMapping("/tenants")
 public class TenantController {
     private final TenantService tenantService;
     public TenantController(TenantService tenantService) {
