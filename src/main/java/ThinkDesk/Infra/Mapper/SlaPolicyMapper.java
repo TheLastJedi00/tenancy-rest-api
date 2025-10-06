@@ -1,6 +1,7 @@
 package ThinkDesk.Infra.Mapper;
 
 import ThinkDesk.Application.DTOs.SlaPolicyDTO;
+import ThinkDesk.Application.DTOs.SlaPolicyResponseDTO;
 import ThinkDesk.Domain.Models.SlaPolicy;
 import org.mapstruct.*;
 
@@ -11,9 +12,7 @@ public interface SlaPolicyMapper {
     @Mapping(target = "tenant", ignore = true)
     SlaPolicy toEntity(SlaPolicyDTO dto);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "tenant", ignore = true)
-    SlaPolicyDTO toDto(SlaPolicy slaPolicy);
+    SlaPolicyResponseDTO toResponseDTO(SlaPolicy slaPolicy);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)

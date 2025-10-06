@@ -1,6 +1,7 @@
 package ThinkDesk.Application.Controllers;
 
 import ThinkDesk.Application.DTOs.SlaPolicyDTO;
+import ThinkDesk.Application.DTOs.SlaPolicyResponseDTO;
 import ThinkDesk.Domain.Models.SlaPolicy;
 import ThinkDesk.Domain.Services.SlaPolicyService;
 import ThinkDesk.Infra.Mapper.SlaPolicyMapper;
@@ -26,34 +27,44 @@ public class SlaPolicyController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<SlaPolicy>> getAll(Pageable pageable) {
-        return ResponseEntity.ok().body(slaPolicyService.getAll(pageable));
+    public ResponseEntity<Page<SlaPolicyResponseDTO>> getAll(
+            @PageableDefault(size = 15, sort = {"name"}) Pageable pageable) {
+
+        Page<SlaPolicy> slaPolicyPage = slaPolicyService.getAll(pageable);
+        Page<SlaPolicyResponseDTO> responseDtoPage = slaPolicyPage.map(slaPolicyMapper::toResponseDTO);
+
+        return ResponseEntity.ok(responseDtoPage);
     }
 
     @GetMapping("/{id}")
-    public SlaPolicy getById(@PathVariable Long id) {
-        return slaPolicyService.getById(id);
+    public ResponseEntity<SlaPolicyResponseDTO> getById(@PathVariable Long id) {
+        SlaPolicy slaPolicy = slaPolicyService.getById(id);
+        SlaPolicyResponseDTO responseDto = slaPolicyMapper.toResponseDTO(slaPolicy);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/tenant/{tenantId}")
-    public ResponseEntity<Page<SlaPolicyDTO>> getAllByTenant(
+    public ResponseEntity<Page<SlaPolicyResponseDTO>> getAllByTenant(
             @PathVariable Long tenantId,
-            @PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
+            @PageableDefault(size = 15, sort = {"name"}) Pageable pageable) {
 
         Page<SlaPolicy> slaPolicyPage = slaPolicyService.getAllByTenant(tenantId, pageable);
-        Page<SlaPolicyDTO> responseDtoPage = slaPolicyPage.map(slaPolicyMapper::toDto);
+        Page<SlaPolicyResponseDTO> responseDtoPage = slaPolicyPage.map(slaPolicyMapper::toResponseDTO);
 
         return ResponseEntity.ok(responseDtoPage);
     }
 
     @PostMapping
-    public ResponseEntity<SlaPolicy> create(@RequestBody @Valid SlaPolicyDTO data) {
-        return ResponseEntity.ok().body(slaPolicyService.create(data));
+    public ResponseEntity<SlaPolicyResponseDTO> create(@RequestBody @Valid SlaPolicyDTO data) {
+        SlaPolicy newPolicy = slaPolicyService.create(data);
+        return ResponseEntity.ok(slaPolicyMapper.toResponseDTO(newPolicy));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SlaPolicy> update(@PathVariable Long id, @RequestBody @Valid SlaPolicyDTO data) {
-        return ResponseEntity.ok().body(slaPolicyService.update(id, data));
+    public ResponseEntity<SlaPolicyResponseDTO> update(@PathVariable Long id, @RequestBody @Valid SlaPolicyDTO data) {
+        SlaPolicy updatedPolicy = slaPolicyService.update(id, data);
+        return ResponseEntity.ok(slaPolicyMapper.toResponseDTO(updatedPolicy));
     }
 
     @DeleteMapping("/{id}")
