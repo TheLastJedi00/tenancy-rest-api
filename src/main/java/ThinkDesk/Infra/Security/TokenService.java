@@ -1,6 +1,7 @@
 package ThinkDesk.Infra.Security;
 
 import ThinkDesk.Domain.Models.Admin;
+import ThinkDesk.Domain.Models.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -16,13 +17,13 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String generateToken(Admin admin){
+    public String generateToken(User user){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
-                    .withIssuer("Zoo API")
-                    .withSubject(admin.getLogin())
-                    .withClaim("Admin: ", admin.getName())
+                    .withIssuer("Think Desk")
+                    .withSubject(user.getUsername())
+                    .withClaim("Admin: ", user.getName())
                     .withExpiresAt(expires())
                     .sign(algorithm);
         } catch (JWTCreationException exception){
@@ -35,7 +36,7 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
                     // specify any specific claim validations
-                    .withIssuer("Zoo API")
+                    .withIssuer("Think Desk")
                     // reusable verifier instance
                     .build()
                     .verify(token)

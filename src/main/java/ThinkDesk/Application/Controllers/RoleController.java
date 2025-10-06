@@ -27,25 +27,22 @@ public class RoleController {
         return ResponseEntity.ok(roleService.getAll());
     }
 
-    @GetMapping
-    @RequestMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Role> getById(@PathVariable Long id){
         return ResponseEntity.ok(roleService.getById(id));
     }
 
-    @GetMapping
-    @RequestMapping("/{name}")
+    @GetMapping("/{name}")
     public ResponseEntity<Role> getByName(@RequestParam String name) {
         return ResponseEntity.ok(roleService.getByName(name));
     }
 
-    @PutMapping
-    @RequestMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Role> update(@PathVariable Long id, @RequestBody RoleDto data){
         return ResponseEntity.ok(roleService.update(id, data));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public  ResponseEntity<Role> delete(@PathVariable Long id){
         roleService.delete(id);
         return ResponseEntity.noContent().build();

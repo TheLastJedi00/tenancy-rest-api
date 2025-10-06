@@ -1,5 +1,5 @@
 package ThinkDesk.Application.Controllers;
-import ThinkDesk.Application.DTOs.UserDto;
+import ThinkDesk.Application.DTOs.UserRequestDto;
 import ThinkDesk.Domain.Models.User;
 import ThinkDesk.Domain.Services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +28,12 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody UserDto data) {
+    public ResponseEntity<User> create(@RequestBody UserRequestDto data) {
         return ResponseEntity.ok().body(UserService.create(data));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody UserDto data) {
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody UserRequestDto data) {
         return ResponseEntity.ok().body(UserService.update(id, data));
     }
 
