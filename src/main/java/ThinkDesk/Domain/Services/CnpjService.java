@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CnpjService {
-    private final String url = "https://cnpj.ws/cnpj/";
+    private final String url = "https://publica.cnpj.ws/cnpj/";
     private final RestTemplate restTemplate;
 
     public CnpjService(RestTemplate restTemplate) {
