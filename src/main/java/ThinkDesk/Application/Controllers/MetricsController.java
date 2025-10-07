@@ -14,8 +14,11 @@ import java.util.Map;
 @RequestMapping("/metrics")
 public class MetricsController {
 
-    @Autowired
-    private MetricsService metricsService;
+    private final MetricsService metricsService;
+
+    public MetricsController(MetricsService metricsService) {
+        this.metricsService = metricsService;
+    }
 
     @GetMapping("/team/{teamId}")
     public ResponseEntity<Map<String, Object>> getTeamMetrics(@PathVariable Long teamId) {

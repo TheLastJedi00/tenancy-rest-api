@@ -6,23 +6,17 @@ O **ThinkDesk** é uma API REST multi-inquilino (multi-tenant) projetada para ge
 
 A aplicação foi construída utilizando Java e Spring Boot, seguindo os princípios da **Arquitetura Limpa (Clean Architecture)** para garantir uma separação clara de responsabilidades, alta testabilidade e manutenibilidade.
 
-A estrutura do projeto é uma implementação prática dos princípios da Arquitetura Limpa (Clean Architecture) e da Arquitetura Hexagonal (Ports and Adapters). O objetivo é isolar o núcleo de negócio (Domain e Application) das dependências externas (Infra). As interfaces definidas no Domínio atuam como "Portas", enquanto as implementações na camada de Infraestrutura (como repositórios JPA e controllers REST) funcionam como "Adaptadores"
-
 ---
 
 ## Arquitetura
 
-O projeto é dividido em três camadas principais, refletindo os princípios da Arquitetura Limpa:
+O projeto é dividido em três camadas principais, refletindo os princípios da Arquitetura Limpa e da **Arquitetura Hexagonal (Ports and Adapters)**. O objetivo é isolar o núcleo de negócio (`Domain` e `Application`) das dependências externas (`Infra`).
 
-- **`/src/main/java/ThinkDesk/Domain`**: O coração da aplicação. Esta camada contém os modelos de negócio (Entidades), as regras de negócio centrais e as interfaces dos repositórios. Não possui dependências de frameworks externos como Spring ou JPA.
+- **`/src/main/java/ThinkDesk/Domain`**: O coração da aplicação (o "Hexágono"). Esta camada contém os modelos de negócio (Entidades), as regras de negócio centrais e as interfaces dos repositórios (as "Portas"). Não possui dependências de frameworks externos.
 
-- **`/src/main/java/ThinkDesk/Application`**: A camada de casos de uso (Use Cases). Ela orquestra o fluxo de dados entre a camada de interface e a de domínio. Contém os `Services` da aplicação, os `Controllers` que definem os endpoints da API e os `DTOs` (Data Transfer Objects) para a comunicação.
+- **`/src/main/java/ThinkDesk/Application`**: A camada de casos de uso. Ela orquestra o fluxo de dados entre a camada de interface e a de domínio. Contém os `Services` da aplicação, os `Controllers` e os `DTOs`.
 
-- **`/src/main/java/ThinkDesk/Infra`**: A camada mais externa, contendo os detalhes de implementação. Aqui ficam as implementações dos repositórios (usando Spring Data JPA), a configuração de segurança (Spring Security, JWT), clientes para serviços externos (como o Gemini API Client) e outras configurações de infraestrutura.
-
-O fluxo de uma requisição segue o seguinte padrão:
-
-`Controller (Application) -> Service (Application) -> Entidade/Domínio (Domain) <- Repositório (Infra)`
+- **`/src/main/java/ThinkDesk/Infra`**: A camada mais externa, contendo os "Adaptadores". Aqui ficam as implementações das "Portas" (como repositórios JPA), a configuração de segurança (Spring Security), e outras configurações de infraestrutura que conectam o núcleo da aplicação ao mundo exterior.
 
 ---
 
@@ -35,38 +29,35 @@ O fluxo de uma requisição segue o seguinte padrão:
 - **MySQL**: Banco de dados relacional.
 - **Spring Security**: Para autenticação e autorização.
 - **JWT (JSON Web Tokens)**: Para a segurança de endpoints stateless.
-- **Lombok**: Para reduzir código boilerplate (getters, setters, construtores).
-- **Maven/Gradle**: Para gerenciamento de dependências e build.
+- **Lombok**: Para reduzir código boilerplate.
 
 ---
 
-## Pré-requisitos e Configuração
+## Enumerações (Valores Válidos)
 
-1.  **Java Development Kit (JDK)**: Versão 17 ou superior.
-2.  **Maven ou Gradle**: Instalado e configurado no seu ambiente.
-3.  **MySQL**: Uma instância do MySQL Server rodando.
+Ao enviar dados para a API, utilize os seguintes valores (strings) para os campos que esperam uma enumeração:
 
-### Como Executar
+- **`TicketStatus`**: Status de um ticket.
+  - `OPEN`
+  - `AWAITINGCUSTOMER`
+  - `RESOLVED`
+  - `CLOSED`
 
-1.  **Clone o repositório:**
-    ```bash
-    git clone <url-do-repositorio>
-    cd tenancy-rest-api
-    ```
+- **`TicketCategory`**: Categoria de um ticket.
+  - `SERVICEREQUEST`
+  - `PROBLEM`
+  - `INCIDENT`
 
-2.  **Configure o Banco de Dados:**
-    - Crie um banco de dados no seu MySQL chamado `multi_tenancy`.
-    - Abra o arquivo `src/main/resources/application.properties`.
-    - Altere as propriedades `spring.datasource.username` e `spring.datasource.password` com as suas credenciais do MySQL.
+- **`TicketPriority`**: Prioridade de um ticket.
+  - `URGENT`
+  - `HIGH`
+  - `MEDIUM`
+  - `LOW`
 
-3.  **Execute a Aplicação:**
-    - Você pode executar a aplicação pela sua IDE (IntelliJ, Eclipse) ou via linha de comando:
-    ```bash
-    # Usando Maven
-    ./mvnw spring-boot:run
-    ```
-
-4.  A API estará disponível em `http://localhost:8080`.
+- **`TechnicianLevel`**: Nível de especialização de um técnico.
+  - `L1`
+  - `L2`
+  - `Specialist`
 
 ---
 
@@ -74,67 +65,292 @@ O fluxo de uma requisição segue o seguinte padrão:
 
 A autenticação é necessária para a maioria dos endpoints e é feita através de um Bearer Token JWT no header `Authorization`.
 
-### Autenticação
+### 1. Autenticação
 
-| Método | Path       | Descrição                                         |
-|--------|------------|-----------------------------------------------------|
-| `POST` | `/login`   | Autentica um `User` ou `Technician` e retorna um token JWT. |
+**Controller:** `LoginController`
 
-### Tenants
+- **`POST /login`**
+  - **Descrição:** Autentica um `User` ou `Technician` e retorna um token JWT.
+  - **Request Body:**
+    ```json
+    {
+      "login": "user@example.com",
+      "password": "password123"
+    }
+    ```
+  - **Response Body (200 OK):**
+    ```json
+    {
+      "token": "ey...[jwt_token]..."
+    }
+    ```
 
-- **Path Base:** `/tenants`
+---
 
-| Método | Path       | Descrição                 |
-|--------|------------|---------------------------|
-| `GET`  | `/`        | Lista todos os tenants.   |
-| `GET`  | `/{id}`    | Busca um tenant por ID.   |
-| `POST` | `/`        | Cria um novo tenant.      |
-| `PUT`  | `/{id}`    | Atualiza um tenant.       |
+### 2. Tenants
 
-### Usuários (Users)
+**Controller:** `TenantController`
 
-- **Path Base:** `/users`
+- **`GET /tenants`**
+  - **Descrição:** Lista todos os tenants cadastrados.
+  - **Response Body (200 OK):** `List<Tenant>`
 
-| Método | Path       | Descrição                 |
-|--------|------------|---------------------------|
-| `GET`  | `/`        | Lista todos os usuários.  |
-| `POST` | `/`        | Cria um novo usuário.     |
+- **`POST /tenants`**
+  - **Descrição:** Cria um novo tenant.
+  - **Request Body:**
+    ```json
+    {
+      "tradingName": "Empresa Exemplo",
+      "taxID": "12.345.678/0001-99",
+      "createdAt": "2025-10-07T10:00:00",
+      "settings": "{\"theme\":\"dark\"}"
+    }
+    ```
+  - **Response Body (200 OK):** `Tenant`
 
-### Técnicos (Technicians)
+- **`PUT /tenants/{id}`**
+  - **Descrição:** Atualiza um tenant existente.
+  - **Request Body:** (Mesma estrutura do `POST`)
 
-- **Path Base:** `/technicians`
+- **`DELETE /tenants/{id}`**
+  - **Descrição:** Deleta um tenant.
+  - **Response (204 No Content)**
 
-| Método | Path       | Descrição                   |
-|--------|------------|-----------------------------|
-| `GET`  | `/`        | Lista todos os técnicos.    |
-| `POST` | `/`        | Cria um novo técnico.       |
+---
 
-### Tickets
+### 3. Usuários (Users)
 
-- **Path Base:** `/tickets`
+**Controller:** `UserController`
 
-| Método | Path       | Descrição                 |
-|--------|------------|---------------------------|
-| `GET`  | `/`        | Lista todos os tickets.   |
-| `GET`  | `/{id}`    | Busca um ticket por ID.   |
-| `POST` | `/`        | Cria um novo ticket.      |
-| `PUT`  | `/{id}`    | Atualiza um ticket.       |
+- **`GET /users`**
+  - **Descrição:** Lista todos os usuários.
+  - **Response Body (200 OK):** `List<User>`
 
-### Políticas de SLA (SLA Policies)
+- **`GET /users/{id}`**
+  - **Descrição:** Busca um usuário por ID.
+  - **Response Body (200 OK):** `User`
 
-- **Path Base:** `/slas`
+- **`POST /users`**
+  - **Descrição:** Cria um novo usuário.
+  - **Request Body:**
+    ```json
+    {
+      "name": "Nome do Usuário",
+      "email": "usuario@exemplo.com",
+      "password": "password123",
+      "position": "Analista",
+      "active": true,
+      "tenantId": 1
+    }
+    ```
+  - **Response Body (200 OK):** `User`
 
-| Método | Path       | Descrição                     |
-|--------|------------|-------------------------------|
-| `GET`  | `/`        | Lista todas as políticas.     |
-| `POST` | `/`        | Cria uma nova política de SLA.|
+- **`PUT /users/{id}`**
+  - **Descrição:** Atualiza um usuário existente.
+  - **Request Body:** (Mesma estrutura do `POST`)
 
-### Métricas
+- **`DELETE /users/{id}`**
+  - **Descrição:** Deleta um usuário.
+  - **Response (204 No Content)**
 
-- **Path Base:** `/metrics`
+---
 
-| Método | Path             | Descrição                                      |
-|--------|------------------|------------------------------------------------|
-| `GET`  | `/team/{id}`     | Retorna métricas de performance para um time.  |
-| `GET`  | `/employee/{id}` | Retorna métricas de performance para um técnico. |
+### 4. Técnicos (Technicians)
 
+**Controller:** `TechnicianController`
+
+- **`GET /technicians`**
+  - **Descrição:** Lista todos os técnicos.
+  - **Response Body (200 OK):** `List<Technician>`
+
+- **`GET /technicians/{id}`**
+  - **Descrição:** Busca um técnico por ID.
+  - **Response Body (200 OK):** `Technician`
+
+- **`POST /technicians`**
+  - **Descrição:** Cria um novo técnico.
+  - **Request Body:**
+    ```json
+    {
+      "id": null,
+      "name": "Nome do Técnico",
+      "email": "tecnico@exemplo.com",
+      "password": "password123",
+      "level": "L1",
+      "active": true,
+      "tenant": { "id": 1 }
+    }
+    ```
+  - **Response Body (200 OK):** `Technician`
+
+- **`PUT /technicians/{id}`**
+  - **Descrição:** Atualiza um técnico existente.
+  - **Request Body:** (Mesma estrutura do `POST`)
+
+- **`DELETE /technicians/{id}`**
+  - **Descrição:** Deleta um técnico.
+  - **Response (204 No Content)**
+
+---
+
+### 5. Tickets
+
+**Controller:** `TicketController`
+
+- **`GET /tickets`**
+  - **Descrição:** Lista todos os tickets de forma paginada.
+  - **Response Body (200 OK):** `Page<Ticket>`
+
+- **`GET /tickets/{id}`**
+  - **Descrição:** Busca um ticket por ID.
+  - **Response Body (200 OK):** `Ticket`
+
+- **`POST /tickets`**
+  - **Descrição:** Cria um novo ticket.
+  - **Request Body:**
+    ```json
+    {
+      "title": "Problema com a impressora",
+      "description": "A impressora do segundo andar não está funcionando.",
+      "priority": "MEDIUM",
+      "resolutionDueDate": "2025-10-08T18:00:00",
+      "category": "HARDWARE",
+      "technician": { "id": 1 },
+      "tenant": { "id": 1 }
+    }
+    ```
+  - **Response Body (200 OK):** `Ticket`
+
+- **`PUT /tickets/{id}`**
+  - **Descrição:** Atualiza um ticket existente.
+  - **Request Body:** (Mesma estrutura do `POST`)
+
+- **`DELETE /tickets/{id}`**
+  - **Descrição:** Deleta um ticket.
+  - **Response (204 No Content)**
+
+---
+
+### 6. Histórico de Tickets (TicketLog)
+
+**Controller:** `TicketLogController`
+
+- **`GET /ticketlog`**
+  - **Descrição:** Lista todos os logs de tickets.
+  - **Response Body (200 OK):** `List<TicketLog>`
+
+- **`POST /ticketlog`**
+  - **Descrição:** Adiciona uma nova entrada de log a um ticket.
+  - **Request Body:**
+    ```json
+    {
+      "content": ["Técnico verificou o problema.", "Escalado para o N2."],
+      "createdAt": "2025-10-07T11:00:00",
+      "ticket_id": 1,
+      "isPrivate": false
+    }
+    ```
+  - **Response Body (200 OK):** `TicketLog`
+
+- **`PUT /ticketlog/{id}`**
+  - **Descrição:** Atualiza uma entrada de log.
+  - **Request Body:** (Mesma estrutura do `POST`)
+
+- **`DELETE /ticketlog/{id}`**
+  - **Descrição:** Deleta uma entrada de log.
+  - **Response (204 No Content)**
+
+---
+
+### 7. Políticas de SLA (SLA Policies)
+
+**Controller:** `SlaPolicyController`
+
+- **`GET /slapolicies`**
+  - **Descrição:** Lista todas as políticas de SLA de forma paginada.
+  - **Response Body (200 OK):** `Page<SlaPolicyResponseDTO>`
+
+- **`GET /slapolicies/{id}`**
+  - **Descrição:** Busca uma política por ID.
+  - **Response Body (200 OK):** `SlaPolicyResponseDTO`
+
+- **`GET /slapolicies/tenant/{tenantId}`**
+  - **Descrição:** Lista todas as políticas de um tenant específico.
+  - **Response Body (200 OK):** `Page<SlaPolicyResponseDTO>`
+
+- **`POST /slapolicies`**
+  - **Descrição:** Cria uma nova política de SLA.
+  - **Request Body:**
+    ```json
+    {
+      "name": "SLA Padrão - Prioridade Alta",
+      "responseTimeMinutes": 60,
+      "resolutionTimeMinutes": 240,
+      "operationalHoursOnly": true,
+      "isActive": true,
+      "priority": "HIGH",
+      "tenantId": 1
+    }
+    ```
+  - **Response Body (200 OK):** `SlaPolicyResponseDTO`
+
+- **`PUT /slapolicies/{id}`**
+  - **Descrição:** Atualiza uma política existente.
+  - **Request Body:** (Mesma estrutura do `POST`)
+
+- **`DELETE /slapolicies/{id}`**
+  - **Descrição:** Deleta uma política.
+  - **Response (204 No Content)**
+
+---
+
+### 8. Papéis (Roles)
+
+**Controller:** `RoleController`
+
+- **`GET /roles`**
+  - **Descrição:** Lista todos os papéis.
+  - **Response Body (200 OK):** `List<Role>`
+
+- **`GET /roles/{id}`**
+  - **Descrição:** Busca um papel por ID.
+  - **Response Body (200 OK):** `Role`
+
+- **`POST /roles`**
+  - **Descrição:** Cria um novo papel.
+  - **Request Body:**
+    ```json
+    {
+      "role": "ROLE_ADMIN"
+    }
+    ```
+  - **Response Body (200 OK):** `Role`
+
+- **`PUT /roles/{id}`**
+  - **Descrição:** Atualiza um papel.
+  - **Request Body:** (Mesma estrutura do `POST`)
+
+- **`DELETE /roles/{id}`**
+  - **Descrição:** Deleta um papel.
+  - **Response (204 No Content)**
+
+---
+
+### 9. Métricas
+
+**Controller:** `MetricsController`
+
+- **`GET /metrics/team/{teamId}`**
+  - **Descrição:** Retorna métricas de performance para um time específico.
+  - **Response Body (200 OK):**
+    ```json
+    {
+      "resolvedTickets": 150,
+      "slaMet": 145,
+      "openTickets": 12
+    }
+    ```
+
+- **`GET /metrics/employee/{employeeId}`**
+  - **Descrição:** Retorna métricas de performance para um técnico específico.
+  - **Response Body (200 OK):** (Mesma estrutura da métrica de time)
