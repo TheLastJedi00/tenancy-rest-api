@@ -7,16 +7,11 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Priority {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    private Tenant tenant;
+    private Ticket ticket;
 }

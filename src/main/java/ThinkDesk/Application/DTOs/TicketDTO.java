@@ -1,6 +1,9 @@
 package ThinkDesk.Application.DTOs;
 
+import ThinkDesk.Domain.Models.Enums.TicketCategory;
 import ThinkDesk.Domain.Models.Enums.TicketPriority;
+import ThinkDesk.Domain.Models.Technician;
+import ThinkDesk.Domain.Models.Tenant;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,11 +14,14 @@ public record TicketDTO(
         String title,
         @NotBlank
         String description,
-        @NotNull
+        @NotBlank
         TicketPriority priority,
-        LocalDateTime resolutionDueDate
-
-//      Category category,
-//      Technician technician,
-//      Tenant tenant
+        @NotBlank
+        LocalDateTime resolutionDueDate,
+        @NotBlank
+        TicketCategory category,
+        @NotBlank
+        Technician technician,
+        @NotBlank
+        Tenant tenant
 ){}

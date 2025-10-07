@@ -17,9 +17,7 @@ import java.util.stream.Collectors;
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Technician implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,7 +29,6 @@ public class Technician implements UserDetails {
     private boolean active = true;
     @ManyToOne(fetch = FetchType.LAZY)
     private Tenant tenant;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "technician_roles",
@@ -39,7 +36,6 @@ public class Technician implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
-
     @ManyToOne
     private Team team;
 
@@ -51,34 +47,28 @@ public class Technician implements UserDetails {
         this.active = dto.active();
         this.tenant = dto.tenant();
     }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRole()))
                 .collect(Collectors.toList());
     }
-
     @Override
     public String getUsername() {
         return this.email;
     }
-
     @Override
     public boolean isAccountNonExpired() {
         return this.active;
     }
-
     @Override
     public boolean isAccountNonLocked() {
         return this.active;
     }
-
     @Override
     public boolean isCredentialsNonExpired() {
         return this.active;
     }
-
     @Override
     public boolean isEnabled() {
         return this.active;

@@ -12,17 +12,4 @@ public record SlaPolicyResponseDTO(
         boolean isActive,
         TicketPriority priority,
         Long tenantId
-) {
-    public SlaPolicyResponseDTO(SlaPolicy slaPolicy) {
-        this(
-                slaPolicy.getId(),
-                slaPolicy.getName(),
-                slaPolicy.getResponseTimeMinutes(),
-                slaPolicy.getResolutionTimeMinutes(),
-                slaPolicy.isOperationalHoursOnly(),
-                slaPolicy.isActive(),
-                slaPolicy.getPriority(),
-                slaPolicy.getTenant().getId()
-        );
-    }
-}
+) {}

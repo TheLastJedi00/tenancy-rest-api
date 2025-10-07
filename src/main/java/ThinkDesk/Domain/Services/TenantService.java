@@ -25,7 +25,9 @@ public class TenantService {
     public Tenant create(TenantDto tenantDto) {
         String cnpj = tenantDto.taxID();
         CnpjDto cnpjResponse = cnpjService.getTenantByCnpj(cnpj);
-        Tenant tenant = new Tenant(tenantDto, cnpjResponse);
+        Tenant tenant = tenantMapper.toEntity(tenantDto);
+        tenant.setLegalName(cnpjResponse.razaoSocial());
+        tenant.setTradingName(cnpjResponse.razaoSocial());
         return tenantRepository.save(tenant);
     }
 

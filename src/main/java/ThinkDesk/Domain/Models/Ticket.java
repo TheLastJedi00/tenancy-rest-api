@@ -1,6 +1,7 @@
 package ThinkDesk.Domain.Models;
 
 import ThinkDesk.Application.DTOs.TicketDTO;
+import ThinkDesk.Domain.Models.Enums.TicketCategory;
 import ThinkDesk.Domain.Models.Enums.TicketPriority;
 import ThinkDesk.Domain.Models.Enums.TicketStatus;
 import jakarta.persistence.*;
@@ -12,10 +13,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Ticket {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,8 +22,12 @@ public class Ticket {
     private String translatedDescription;
     private LocalDateTime createdAt;
     private LocalDateTime closedAt;
+    @Enumerated(EnumType.STRING)
     private TicketStatus status;
+    @Enumerated(EnumType.STRING)
     private TicketPriority priority;
+    @Enumerated(EnumType.STRING)
+    private TicketCategory category;
     @ManyToOne
     private Technician technician;
     @ManyToOne(fetch = FetchType.LAZY)

@@ -45,16 +45,13 @@ public class SlaPolicyService {
         if (slaPolicyRepository.existsByTenantIdAndPriority(dto.tenantId(), dto.priority())) {
             throw new EntityExistsException("Já existe uma política de SLA para esta prioridade neste tenant.");
         }
-
         Tenant tenant = tenantRepository.findById(dto.tenantId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tenant com ID " + dto.tenantId() + " não encontrado."));
 
         SlaPolicy slaPolicy = slaPolicyMapper.toEntity(dto);
         slaPolicy.setTenant(tenant);
-
         return slaPolicyRepository.save(slaPolicy);
     }
-
     public Page<SlaPolicy> getAll(Pageable pageable) {
         return slaPolicyRepository.findAll(pageable);
     }
