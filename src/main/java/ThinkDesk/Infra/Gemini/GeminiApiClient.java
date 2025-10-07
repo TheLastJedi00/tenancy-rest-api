@@ -19,7 +19,10 @@ public class GeminiApiClient {
 
     public GeminiResponseDTO translate(String text) {
         String url = apiUrl + "?key=" + apiKey;
-        GeminiRequestDTO request = new GeminiRequestDTO("Translate the following text to English: " + text);
+        GeminiRequestDTO request = new GeminiRequestDTO(
+                "Se esse chamado estiver muito técnico, traduza os termos técnicos para se tornar mais compreensível, " +
+                        "se caso estiver muito vago avalie e encontre alguma lógica. " +
+                        "Em ambos os casos descreva como proceder para atender esse chamado: " + text);
         return restTemplate.postForObject(url, request, GeminiResponseDTO.class);
     }
 }
