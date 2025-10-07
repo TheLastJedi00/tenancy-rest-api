@@ -38,4 +38,9 @@ public class ServiceRequestController {
     public ResponseEntity<ServiceRequest> update(@PathVariable Long id, @RequestBody ServiceRequestDto data){
         return ResponseEntity.ok(serviceRequestService.update(id, data));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ServiceRequest> delete(@PathVariable Long id) {
+        return ResponseEntity.ok(serviceRequestService.delete(id));
+    }
 }

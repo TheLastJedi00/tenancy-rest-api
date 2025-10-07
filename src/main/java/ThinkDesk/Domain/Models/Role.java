@@ -1,6 +1,5 @@
 package ThinkDesk.Domain.Models;
 
-import ThinkDesk.Domain.Models.Enums.RoleName;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +15,5 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private RoleName role;
+    private String role;
 }
