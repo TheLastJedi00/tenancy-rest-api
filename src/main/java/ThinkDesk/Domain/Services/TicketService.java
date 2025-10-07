@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TicketService {
@@ -51,5 +52,21 @@ public class TicketService {
 
     public Page<Ticket> getAll(Pageable pageable) {
         return ticketRepository.findAll(pageable);
+    }
+
+    public List<Ticket> getResolvedTicketByTeam(List<Long> membersId, TicketStatus status){
+        return ticketRepository.findByTechnicianIdInAndStatus(membersId, status);
+    }
+
+    public List<Ticket> getOpenTicketsByTeam(List<Long> membersId, TicketStatus status){
+        return ticketRepository.findByTechnicianIdInAndStatusNot(membersId, status);
+    }
+
+    public List<Ticket> getResolvedTicketByEmployee(Long employeeId, TicketStatus status){
+        return ticketRepository.findByTechnicianIdAndStatus(employeeId, status);
+    }
+
+    public List<Ticket> getOpenTicketsByEmployee(Long employeeId, TicketStatus status){
+        return ticketRepository.findByTechnicianIdAndStatusNot(employeeId, status);
     }
 }

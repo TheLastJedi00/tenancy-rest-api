@@ -1,6 +1,6 @@
 package ThinkDesk.Infra.Security;
 
-import ThinkDesk.Domain.Repositories.AdminRepository;
+import ThinkDesk.Domain.Repositories.TechnicianRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,12 +16,12 @@ import java.io.IOException;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
-    private final AdminRepository adminRepository;
-    public SecurityFilter(TokenService tokenService, AdminRepository adminRepository) {
-        this.tokenService = tokenService;
-        this.adminRepository = adminRepository;
-    }
+    private final TechnicianRepository technicianRepository;
 
+    public SecurityFilter(TokenService tokenService, TechnicianRepository technicianRepository) {
+        this.tokenService = tokenService;
+        this.technicianRepository = technicianRepository;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -30,7 +30,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         if(tokenJWT != null) {
             System.out.println("Token valid");
             var subject = tokenService.getSubject(tokenJWT);
-            UserDetails user = adminRepository.findByLogin(subject);
+            UserDetails user = technicianRepository.findByEmail(subject);
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);

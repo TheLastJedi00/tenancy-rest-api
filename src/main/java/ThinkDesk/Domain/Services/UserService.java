@@ -5,6 +5,7 @@ import ThinkDesk.Domain.Models.Tenant;
 import ThinkDesk.Domain.Models.User;
 import ThinkDesk.Domain.Repositories.UserRepository;
 import ThinkDesk.Infra.Mapper.UserMapper;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +31,10 @@ public class UserService {
 
     public List<User> getAll() {
         return userRepository.findAll();
+    }
+
+    public UserDetails getByEmail(String email){
+        return userRepository.findByEmail(email);
     }
 
     public User getById(Long id) {

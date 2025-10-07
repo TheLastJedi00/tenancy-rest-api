@@ -5,6 +5,7 @@ import ThinkDesk.Domain.Models.Enums.TechnicianLevel;
 import ThinkDesk.Domain.Models.Technician;
 import ThinkDesk.Domain.Repositories.TechnicianRepository;
 import ThinkDesk.Infra.Mapper.TechnicianMapper;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,10 +26,18 @@ public class TechnicianService {
                 .orElseThrow(() -> new RuntimeException("Técnico com ID " + id + " não encontrado."));
     }
 
+    public List<Technician> getByTeamId(Long teamId){
+        return technicianRepository.findByTeamId(teamId);
+    }
+
     public Technician update(Long id, TechnicianDTO dto) {
         Technician technician = getById(id);
         technicianMapper.updateEntityFromDto(dto, technician);
         return technicianRepository.save(technician);
+    }
+
+    public UserDetails getByEmail(String email){
+        return technicianRepository.findByEmail(email);
     }
 
     public void delete(Long id) {

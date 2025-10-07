@@ -20,5 +20,5 @@ public class Team {
     private String name;
 
     @OneToMany(mappedBy = "team")
-    private List<Admin> members;
+    private List<Technician> members;
 }

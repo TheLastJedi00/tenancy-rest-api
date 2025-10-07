@@ -1,7 +1,6 @@
 package ThinkDesk.Application.Controllers;
 
 import ThinkDesk.Application.DTOs.LoginDto;
-import ThinkDesk.Domain.Models.Admin;
 import ThinkDesk.Domain.Models.User;
 import ThinkDesk.Infra.Security.TokenJwt;
 import ThinkDesk.Infra.Security.TokenService;

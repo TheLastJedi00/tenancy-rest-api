@@ -1,6 +1,5 @@
 package ThinkDesk.Infra.Security;
 
-import ThinkDesk.Domain.Models.Admin;
 import ThinkDesk.Domain.Models.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

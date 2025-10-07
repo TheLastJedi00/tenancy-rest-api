@@ -1,11 +1,8 @@
 package ThinkDesk.Domain.Services;
 
-import ThinkDesk.Domain.Models.Admin;
 import ThinkDesk.Domain.Models.Enums.TicketStatus;
+import ThinkDesk.Domain.Models.Technician;
 import ThinkDesk.Domain.Models.Ticket;
-import ThinkDesk.Domain.Repositories.AdminRepository;
-import ThinkDesk.Domain.Repositories.TicketRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -15,18 +12,20 @@ import java.util.Map;
 @Service
 public class MetricsService {
 
-    @Autowired
-    private TicketRepository ticketRepository;
+    private final TicketService ticketService;
+    private final TechnicianService technicianService;
 
-    @Autowired
-    private AdminRepository adminRepository;
+    public MetricsService(TicketService ticketService, TechnicianService technicianService) {
+        this.ticketService = ticketService;
+        this.technicianService = technicianService;
+    }
 
     public Map<String, Object> getTeamMetrics(Long teamId) {
-        List<Admin> teamMembers = adminRepository.findByTeamId(teamId);
-        List<Long> memberIds = teamMembers.stream().map(Admin::getId).toList();
+        List<Technician> teamMembers = technicianService.getByTeamId(teamId);
+        List<Long> memberIds = teamMembers.stream().map(Technician::getId).toList();
 
-        List<Ticket> resolvedTickets = ticketRepository.findByTechnicianIdInAndStatus(memberIds, TicketStatus.CLOSED);
-        List<Ticket> openTickets = ticketRepository.findByTechnicianIdInAndStatusNot(memberIds, TicketStatus.CLOSED);
+        List<Ticket> resolvedTickets = ticketService.getResolvedTicketByTeam(memberIds, TicketStatus.CLOSED);
+        List<Ticket> openTickets = ticketService.getOpenTicketsByTeam(memberIds, TicketStatus.CLOSED);
 
         long slaMetCount = resolvedTickets.stream()
                 .filter(ticket -> ticket.getClosedAt().isBefore(ticket.getResolutionDueDate()))
@@ -41,8 +40,8 @@ public class MetricsService {
     }
 
     public Map<String, Object> getEmployeeMetrics(Long employeeId) {
-        List<Ticket> resolvedTickets = ticketRepository.findByTechnicianIdAndStatus(employeeId, TicketStatus.CLOSED);
-        List<Ticket> openTickets = ticketRepository.findByTechnicianIdAndStatusNot(employeeId, TicketStatus.CLOSED);
+        List<Ticket> resolvedTickets = ticketService.getResolvedTicketByEmployee(employeeId, TicketStatus.CLOSED);
+        List<Ticket> openTickets = ticketService.getOpenTicketsByEmployee(employeeId, TicketStatus.CLOSED);
 
         long slaMetCount = resolvedTickets.stream()
                 .filter(ticket -> ticket.getClosedAt().isBefore(ticket.getResolutionDueDate()))
