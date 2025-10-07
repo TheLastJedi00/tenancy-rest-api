@@ -32,13 +32,4 @@ public class Ticket {
     @ManyToOne(fetch = FetchType.LAZY)
     private Tenant tenant;
     private LocalDateTime resolutionDueDate;
-
-    public Ticket(TicketDTO dto, TicketStatus status) {
-        this.title = dto.title();
-        this.description = dto.description();
-        this.createdAt = dto.createdAt();
-        this.status = status;
-        this.priority = dto.priority();
-        this.resolutionDueDate = dto.resolutionDueDate();
-    }
 }

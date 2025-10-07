@@ -43,7 +43,6 @@ public class TicketService {
         Ticket ticket = ticketMapper.toEntity(dto);
         ticket.setStatus(TicketStatus.OPEN);
         ticket.setCreatedAt(LocalDateTime.now());
-
         String translatedDescription = translationService.translate(ticket.getDescription());
         ticket.setTranslatedDescription(translatedDescription);
 
