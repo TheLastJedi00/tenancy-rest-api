@@ -1,200 +1,140 @@
-# API REST de Zoológico
-
-Uma API REST completa para o gerenciamento de um zoológico, desenvolvida com Java e Spring Boot.
+# ThinkDesk Tenancy REST API
 
 ## Visão Geral
 
-Esta API fornece uma interface para realizar operações de CRUD (Criar, Ler, Atualizar e Deletar) nas principais entidades de um zoológico, como Animais, Cuidadores, Habitats e Veterinários. Ela foi projetada seguindo as melhores práticas de desenvolvimento de APIs REST, incluindo o uso de DTOs, tratamento de exceções e segurança baseada em tokens.
+O **ThinkDesk** é uma API REST multi-inquilino (multi-tenant) projetada para gerenciar um sistema de suporte e atendimento, como um helpdesk ou ITSM (IT Service Management). A API permite que diferentes "inquilinos" (tenants) operem de forma isolada, cada um com seus próprios usuários, técnicos, tickets e políticas de serviço.
+
+A aplicação foi construída utilizando Java e Spring Boot, seguindo os princípios da **Arquitetura Limpa (Clean Architecture)** para garantir uma separação clara de responsabilidades, alta testabilidade e manutenibilidade.
+
+A estrutura do projeto é uma implementação prática dos princípios da Arquitetura Limpa (Clean Architecture) e da Arquitetura Hexagonal (Ports and Adapters). O objetivo é isolar o núcleo de negócio (Domain e Application) das dependências externas (Infra). As interfaces definidas no Domínio atuam como "Portas", enquanto as implementações na camada de Infraestrutura (como repositórios JPA e controllers REST) funcionam como "Adaptadores"
+
+---
+
+## Arquitetura
+
+O projeto é dividido em três camadas principais, refletindo os princípios da Arquitetura Limpa:
+
+- **`/src/main/java/ThinkDesk/Domain`**: O coração da aplicação. Esta camada contém os modelos de negócio (Entidades), as regras de negócio centrais e as interfaces dos repositórios. Não possui dependências de frameworks externos como Spring ou JPA.
+
+- **`/src/main/java/ThinkDesk/Application`**: A camada de casos de uso (Use Cases). Ela orquestra o fluxo de dados entre a camada de interface e a de domínio. Contém os `Services` da aplicação, os `Controllers` que definem os endpoints da API e os `DTOs` (Data Transfer Objects) para a comunicação.
+
+- **`/src/main/java/ThinkDesk/Infra`**: A camada mais externa, contendo os detalhes de implementação. Aqui ficam as implementações dos repositórios (usando Spring Data JPA), a configuração de segurança (Spring Security, JWT), clientes para serviços externos (como o Gemini API Client) e outras configurações de infraestrutura.
+
+O fluxo de uma requisição segue o seguinte padrão:
+
+`Controller (Application) -> Service (Application) -> Entidade/Domínio (Domain) <- Repositório (Infra)`
+
+---
 
 ## Tecnologias Utilizadas
 
--   **Java 17+**
--   **Spring Boot 3+**
--   **Spring Data JPA (Hibernate)**
--   **Spring Security**
--   **Maven / Gradle**
--   **Spring Mail**
--   **Banco de Dados (ex: H2, PostgreSQL)**
--   **Lombok**
+- **Java 17+**
+- **Spring Boot**: Framework principal para a construção da aplicação.
+- **Spring Data JPA**: Para persistência de dados e implementação dos repositórios.
+- **Hibernate**: Implementação da JPA para o mapeamento objeto-relacional.
+- **MySQL**: Banco de dados relacional.
+- **Spring Security**: Para autenticação e autorização.
+- **JWT (JSON Web Tokens)**: Para a segurança de endpoints stateless.
+- **Lombok**: Para reduzir código boilerplate (getters, setters, construtores).
+- **Maven/Gradle**: Para gerenciamento de dependências e build.
 
-## Como Executar o Projeto
+---
+
+## Pré-requisitos e Configuração
+
+1.  **Java Development Kit (JDK)**: Versão 17 ou superior.
+2.  **Maven ou Gradle**: Instalado e configurado no seu ambiente.
+3.  **MySQL**: Uma instância do MySQL Server rodando.
+
+### Como Executar
 
 1.  **Clone o repositório:**
     ```bash
-    git clone <URL_DO_REPOSITORIO>
+    git clone <url-do-repositorio>
+    cd tenancy-rest-api
     ```
-2.  **Configure o banco de dados:**
-    -   As configurações de banco de dados estão no arquivo `src/main/resources/application.properties`. Por padrão, ele pode estar configurado para um banco em memória como o H2.
 
-3.  **Execute a aplicação:**
-    -   **Com Maven:**
-        ```bash
-        mvn spring-boot:run
-        ```
-    -   **Com Gradle:**
-        ```bash
-        ./gradlew bootRun
-        ```
-4.  **Acesse a API:**
-    -   A API estará disponível em `http://localhost:8080`.
+2.  **Configure o Banco de Dados:**
+    - Crie um banco de dados no seu MySQL chamado `multi_tenancy`.
+    - Abra o arquivo `src/main/resources/application.properties`.
+    - Altere as propriedades `spring.datasource.username` e `spring.datasource.password` com as suas credenciais do MySQL.
 
-## Estrutura do Projeto
-
-O projeto segue uma arquitetura em camadas para garantir a separação de responsabilidades e a manutenibilidade.
-
-```
-com.example.zoo
-└── Application
-    ├── controllers      // Camada de API (Endpoints REST)
-    └── dtos             // Data Transfer Objects (para requisições e respostas)
-└── Domain
-    ├── reposiories     // Camada de acesso a dados (Spring Data JPA)
-    ├── model           // Entidades JPA (representação do banco de dados)
-    ├── service         // Camada de lógica de negócio
-└── Infra
-    ├── security        // configurações da camada de segurança
-    ├── mapper          // Mapeadores de dto para entidades
-    └── config          // Configurações de segurança (Spring Security, JWT)
-```
-
-## Segurança
-
-A API utiliza **JSON Web Tokens (JWT)** para autenticação e autorização, garantindo que apenas usuários autenticados possam acessar os endpoints.
-
--   **Autenticação:** Para acessar os endpoints protegidos, é necessário enviar um token JWT no cabeçalho `Authorization` de cada requisição.
+3.  **Execute a Aplicação:**
+    - Você pode executar a aplicação pela sua IDE (IntelliJ, Eclipse) ou via linha de comando:
+    ```bash
+    # Usando Maven
+    ./mvnw spring-boot:run
     ```
-    Authorization: Bearer <seu-token-jwt>
-    ```
--   **Endpoint de Autenticação:**
-    -   `POST /auth/login`: Envie credenciais (`username` e `password`) para receber um token JWT.
 
--   **Autorização (Roles):** O acesso a determinados endpoints pode ser restrito por papéis (roles).
-    -   `ROLE_USER`: Acesso geral para consulta.
-    -   `ROLE_ADMIN`: Acesso total, incluindo criação, atualização e exclusão de recursos.
+4.  A API estará disponível em `http://localhost:8080`.
 
-## 📝 Endpoints da API
+---
 
-A seguir estão os endpoints disponíveis, seguindo os padrões REST.
+## Endpoints da API
 
-### Animais
--   **Base Path:** `/animais`
+A autenticação é necessária para a maioria dos endpoints e é feita através de um Bearer Token JWT no header `Authorization`.
 
-| Método  | Endpoint                               | Descrição                                    | Resposta de Sucesso |
-| :------ | :------------------------------------- | :------------------------------------------- | :------------------ |
-| `GET`   | `/`                                    | Retorna uma lista de animais.                | `200 OK`            |
-| `GET`   | `?nome={nome}&especie={espécie}`       | Filtra animais por nome e/ou espécie.        | `200 OK`            |
-| `GET`   | `/{id}`                                | Retorna um animal específico pelo ID.        | `200 OK`            |
-| `POST`  | `/`                                    | Cria um novo animal.                         | `201 Created`       |
-| `PUT`   | `/{id}`                                | Atualiza um animal existente.                | `200 OK`            |
-| `DELETE`| `/{id}`                                | Deleta um animal pelo ID.                    | `204 No Content`    |
+### Autenticação
 
-### Cuidadores
--   **Base Path:** `/cuidadores`
+| Método | Path       | Descrição                                         |
+|--------|------------|-----------------------------------------------------|
+| `POST` | `/login`   | Autentica um `User` ou `Technician` e retorna um token JWT. |
 
-| Método  | Endpoint                               | Descrição                                    | Resposta de Sucesso |
-| :------ | :------------------------------------- | :------------------------------------------- | :------------------ |
-| `GET`   | `/`                                    | Retorna uma lista de cuidadores.             | `200 OK`            |
-| `GET`   | `?especialidade={esp}&turno={turno}`   | Filtra cuidadores por especialidade e/ou turno. | `200 OK`            |
-| `GET`   | `/{id}`                                | Retorna um cuidador específico pelo ID.      | `200 OK`            |
-| `POST`  | `/`                                    | Cria um novo cuidador.                       | `201 Created`       |
-| `PUT`   | `/{id}`                                | Atualiza um cuidador existente.              | `200 OK`            |
-| `DELETE`| `/{id}`                                | Deleta um cuidador pelo ID.                  | `204 No Content`    |
+### Tenants
 
-### Habitats
--   **Base Path:** `/habitats`
+- **Path Base:** `/tenants`
 
-| Método  | Endpoint                               | Descrição                                    | Resposta de Sucesso |
-| :------ | :------------------------------------- | :------------------------------------------- | :------------------ |
-| `GET`   | `/`                                    | Retorna uma lista de habitats.               | `200 OK`            |
-| `GET`   | `?tipo={tipo}`                         | Filtra habitats por tipo.                    | `200 OK`            |
-| `GET`   | `/{id}`                                | Retorna um habitat específico pelo ID.       | `200 OK`            |
-| `POST`  | `/`                                    | Cria um novo habitat.                        | `201 Created`       |
-| `PUT`   | `/{id}`                                | Atualiza um habitat existente.               | `200 OK`            |
-| `DELETE`| `/{id}`                                | Deleta um habitat pelo ID.                   | `204 No Content`    |
+| Método | Path       | Descrição                 |
+|--------|------------|---------------------------|
+| `GET`  | `/`        | Lista todos os tenants.   |
+| `GET`  | `/{id}`    | Busca um tenant por ID.   |
+| `POST` | `/`        | Cria um novo tenant.      |
+| `PUT`  | `/{id}`    | Atualiza um tenant.       |
 
-### Veterinários
--   **Base Path:** `/veterinarios`
+### Usuários (Users)
 
-| Método  | Endpoint                               | Descrição                                    | Resposta de Sucesso |
-| :------ | :------------------------------------- | :------------------------------------------- | :------------------ |
-| `GET`   | `/`                                    | Retorna uma lista de veterinários.           | `200 OK`            |
-| `GET`   | `?especialidade={especialidade}`       | Filtra veterinários pela especialidade.      | `200 OK`            |
-| `GET`   | `/{id}`                                | Retorna um veterinário específico pelo ID.   | `200 OK`            |
-| `POST`  | `/`                                    | Cria um novo veterinário.                    | `201 Created`       |
-| `PUT`   | `/{id}`                                | Atualiza um veterinário existente.           | `200 OK`            |
-| `DELETE`| `/{id}`                                | Deleta um veterinário pelo ID.               | `204 No Content`    |
+- **Path Base:** `/users`
 
-## ⚙️ Regras de Negócio
+| Método | Path       | Descrição                 |
+|--------|------------|---------------------------|
+| `GET`  | `/`        | Lista todos os usuários.  |
+| `POST` | `/`        | Cria um novo usuário.     |
 
-A camada de serviço (`@Service`) implementa as seguintes regras de negócio para manter a integridade dos dados:
+### Técnicos (Technicians)
 
--   **Animais:**
-    -   Um animal deve ser associado a um `habitatId` e `cuidadorId` existentes.
-    -   Não é possível adicionar um animal a um habitat que já atingiu sua capacidade máxima.
--   **Cuidadores:**
-    -   O nome do cuidador é obrigatório.
-    -   Ao ser criado, um e-mail de boas-vindas é enviado para o cuidador.
--   **Habitats:**
-    -   O nome e o tipo do habitat são obrigatórios.
-    -   A capacidade máxima deve ser um número positivo.
--   **Veterinários:**
-    -   O `crvm` (Conselho Regional de Medicina Veterinária) deve ser único para cada veterinário.
+- **Path Base:** `/technicians`
 
-## Data Transfer Objects (DTOs)
+| Método | Path       | Descrição                   |
+|--------|------------|-----------------------------|
+| `GET`  | `/`        | Lista todos os técnicos.    |
+| `POST` | `/`        | Cria um novo técnico.       |
 
-Utilizamos DTOs para desacoplar a camada da API da camada de modelo de dados e para expor apenas as informações necessárias.
+### Tickets
 
-### `AnimalRequestDTO`
-```json
-{
-  "nome": "Simba",
-  "especie": "Leão",
-  "idade": 10,
-  "habitatId": 1,
-  "cuidadorId": 1
-}
-```
+- **Path Base:** `/tickets`
 
-### `CuidadorRequestDTO`
-```json
-{
-  "nome": "João Silva",
-  "especialidade": "Felinos",
-  "turno": "Manhã",
-  "email": "joao.silva@example.com"
-}
-```
+| Método | Path       | Descrição                 |
+|--------|------------|---------------------------|
+| `GET`  | `/`        | Lista todos os tickets.   |
+| `GET`  | `/{id}`    | Busca um ticket por ID.   |
+| `POST` | `/`        | Cria um novo ticket.      |
+| `PUT`  | `/{id}`    | Atualiza um ticket.       |
 
-### `HabitatRequestDTO`
-```json
-{
-  "nome": "Savana Africana",
-  "capacidadeMaxima": 15,
-  "tipo": "Terrestre"
-}
-```
+### Políticas de SLA (SLA Policies)
 
-### `VeterinarioRequestDTO`
-```json
-{
-  "nome": "Dra. Ana Souza",
-  "crvm": "CRMV-SP 12345",
-  "especialidade": "Animais Selvagens"
-}
-```
+- **Path Base:** `/slas`
 
-## Tratamento de Erros
+| Método | Path       | Descrição                     |
+|--------|------------|-------------------------------|
+| `GET`  | `/`        | Lista todas as políticas.     |
+| `POST` | `/`        | Cria uma nova política de SLA.|
 
-A API utiliza códigos de status HTTP padrão para indicar o sucesso ou falha de uma requisição.
+### Métricas
 
-| Código | Status                 | Descrição                                                              |
-| :----- | :--------------------- | :--------------------------------------------------------------------- |
-| `200`  | `OK`                   | A requisição foi bem-sucedida (usado em `GET`, `PUT`).                  |
-| `201`  | `Created`              | O recurso foi criado com sucesso (usado em `POST`).                    |
-| `204`  | `No Content`           | A requisição foi bem-sucedida, mas não há conteúdo para retornar (usado em `DELETE`). |
-| `400`  | `Bad Request`          | A requisição é inválida (ex: corpo malformado, dados faltando).        |
-| `401`  | `Unauthorized`         | Autenticação falhou ou não foi fornecida (token JWT inválido ou ausente). |
-| `403`  | `Forbidden`            | O usuário autenticado não tem permissão para acessar o recurso.        |
-| `404`  | `Not Found`            | O recurso solicitado não foi encontrado.                               |
-| `409`  | `Conflict`             | A requisição conflita com o estado atual do servidor (ex: `crvm` duplicado). |
-| `500`  | `Internal Server Error`| Ocorreu um erro inesperado no servidor.                                |
+- **Path Base:** `/metrics`
+
+| Método | Path             | Descrição                                      |
+|--------|------------------|------------------------------------------------|
+| `GET`  | `/team/{id}`     | Retorna métricas de performance para um time.  |
+| `GET`  | `/employee/{id}` | Retorna métricas de performance para um técnico. |
+
