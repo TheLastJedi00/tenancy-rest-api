@@ -68,7 +68,7 @@ public class SlaPolicyController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id){
             slaPolicyService.delete(id);
             return ResponseEntity.noContent().build();
     }
