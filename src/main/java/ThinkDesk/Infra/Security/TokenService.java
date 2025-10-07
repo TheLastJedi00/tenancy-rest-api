@@ -1,28 +1,31 @@
 package ThinkDesk.Infra.Security;
 
-import ThinkDesk.Domain.Models.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.stream.Collectors;
 
 @Service
 public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String generateToken(User user){
+    public String generateToken(UserDetails userDetails){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("Think Desk")
-                    .withSubject(user.getUsername())
-                    .withClaim("Admin: ", user.getName())
+                    .withSubject(userDetails.getUsername())
+                    .withClaim("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                     .withExpiresAt(expires())
                     .sign(algorithm);
         } catch (JWTCreationException exception){
@@ -34,9 +37,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    // specify any specific claim validations
                     .withIssuer("Think Desk")
-                    // reusable verifier instance
                     .build()
                     .verify(token)
                     .getSubject();
