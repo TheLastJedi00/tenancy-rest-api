@@ -19,9 +19,6 @@ public class Admin implements UserDetails {
     private String login;
     private String password;
 
-    @ManyToOne
-    private Team team;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));

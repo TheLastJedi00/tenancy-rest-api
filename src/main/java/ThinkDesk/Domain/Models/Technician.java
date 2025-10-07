@@ -23,6 +23,10 @@ public class Technician {
     private boolean active = true;
     @ManyToOne(fetch = FetchType.LAZY)
     private Tenant tenant;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Role role;
+    @ManyToOne
+    private Team team;
 
     public Technician(TechnicianDTO dto, TechnicianLevel status) {
         this.name = dto.name();
