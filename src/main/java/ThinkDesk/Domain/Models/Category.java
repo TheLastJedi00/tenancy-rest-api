@@ -2,7 +2,6 @@ package ThinkDesk.Domain.Models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
 @Entity
 @Data
