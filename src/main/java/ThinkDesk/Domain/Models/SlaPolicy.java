@@ -1,11 +1,9 @@
 package ThinkDesk.Domain.Models;
 
+import ThinkDesk.Domain.Models.Enums.TicketCategory;
 import ThinkDesk.Domain.Models.Enums.TicketPriority;
-import ThinkDesk.Domain.Models.Tenant;
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.Set;
 
 @Entity
 @Data
@@ -14,13 +12,15 @@ public class SlaPolicy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Integer responseTimeMinutes;
-    private Integer resolutionTimeMinutes;
+    private Long responseTimeInMinutes;
+    private Long incidentResolutionTimeInMinutes;
+    private Long requestFulfillmentTimeInMinutes;
     private boolean operationalHoursOnly = false;
     private boolean isActive = true;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TicketPriority priority;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
