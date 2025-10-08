@@ -22,8 +22,8 @@ public record SlaPolicyDTO(
         Boolean operationalHoursOnly,
         Boolean isActive,
 
-        @NotNull(message = "A prioridade é obrigatória")
-        TicketPriority priority,
+        @NotNull(message = "A categoria é obrigatória")
+        Long categoryId,
 
         @NotNull(message = "O ID do tenant é obrigatório")
         Long tenantId

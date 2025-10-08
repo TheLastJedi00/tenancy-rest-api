@@ -1,5 +1,6 @@
 package ThinkDesk.Domain.Repositories;
 
+import ThinkDesk.Domain.Models.Category;
 import ThinkDesk.Domain.Models.Enums.TicketPriority; // Importe seu Enum
 import ThinkDesk.Domain.Models.SlaPolicy;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,6 @@ public interface SlaPolicyRepository extends JpaRepository<SlaPolicy, Long> {
 
     Page<SlaPolicy> findByTenantId(Long tenantId, Pageable pageable);
 
-    boolean existsByTenantIdAndPriority(Long tenantId, TicketPriority priority);
+    boolean existsByTenantIdAndCategoryId(Long tenantId, Long categoryId);
 
 }

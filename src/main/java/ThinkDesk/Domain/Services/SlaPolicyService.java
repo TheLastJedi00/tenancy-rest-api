@@ -1,7 +1,6 @@
 package ThinkDesk.Domain.Services;
 
 import ThinkDesk.Application.DTOs.SlaPolicyDTO;
-import ThinkDesk.Domain.Models.Enums.TicketStatus;
 import ThinkDesk.Domain.Models.SlaPolicy;
 import ThinkDesk.Domain.Models.Tenant;
 import ThinkDesk.Domain.Repositories.SlaPolicyRepository;
@@ -42,7 +41,7 @@ public class SlaPolicyService {
     }
 
     public SlaPolicy create(SlaPolicyDTO dto) {
-        if (slaPolicyRepository.existsByTenantIdAndPriority(dto.tenantId(), dto.priority())) {
+        if (slaPolicyRepository.existsByTenantIdAndCategoryId(dto.tenantId(), dto.categoryId())) {
             throw new EntityExistsException("Já existe uma política de SLA para esta prioridade neste tenant.");
         }
         Tenant tenant = tenantRepository.findById(dto.tenantId())
