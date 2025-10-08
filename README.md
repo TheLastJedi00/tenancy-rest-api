@@ -96,7 +96,7 @@ A autenticação é necessária para a maioria dos endpoints e é feita através
   - **Response Body (200 OK):** `List<Tenant>`
 
 - **`POST /tenants`**
-  - **Descrição:** Cria um novo tenant.
+  - **Descrição:** Cria um novo tenant. Valida o CNPJ em um serviço externo.
   - **Request Body:**
     ```json
     {
@@ -304,7 +304,41 @@ A autenticação é necessária para a maioria dos endpoints e é feita através
 
 ---
 
-### 8. Papéis (Roles)
+### 8. Categorias
+
+**Controller:** `CategoryController`
+
+- **`GET /categories`**
+  - **Descrição:** Lista todas as categorias.
+  - **Response Body (200 OK):** `List<Category>`
+
+- **`GET /categories/{id}`**
+  - **Descrição:** Busca uma categoria por ID.
+  - **Response Body (200 OK):** `Category`
+
+- **`POST /categories`**
+  - **Descrição:** Cria uma nova categoria.
+  - **Request Body:**
+    ```json
+    {
+      "name": "Hardware",
+      "description": "Problemas relacionados a equipamentos físicos.",
+      "tenantId": 1
+    }
+    ```
+  - **Response Body (200 OK):** `Category`
+
+- **`PUT /categories/{id}`**
+  - **Descrição:** Atualiza uma categoria existente.
+  - **Request Body:** (Mesma estrutura do `POST`)
+
+- **`DELETE /categories/{id}`**
+  - **Descrição:** Deleta uma categoria.
+  - **Response (204 No Content)**
+
+---
+
+### 9. Papéis (Roles)
 
 **Controller:** `RoleController`
 
@@ -336,7 +370,7 @@ A autenticação é necessária para a maioria dos endpoints e é feita através
 
 ---
 
-### 9. Métricas
+### 10. Métricas
 
 **Controller:** `MetricsController`
 
