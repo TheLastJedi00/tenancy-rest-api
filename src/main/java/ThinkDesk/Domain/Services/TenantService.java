@@ -25,9 +25,9 @@ public class TenantService {
     public Tenant create(TenantDto tenantDto) {
         String cnpj = tenantDto.taxID();
         CnpjDto cnpjResponse = cnpjService.getTenantByCnpj(cnpj);
+        if(cnpjResponse.razaoSocial() == null) throw  new RuntimeException("CNPJ not found");
         Tenant tenant = tenantMapper.toEntity(tenantDto);
         tenant.setLegalName(cnpjResponse.razaoSocial());
-        tenant.setTradingName(cnpjResponse.razaoSocial());
         return tenantRepository.save(tenant);
     }
 
