@@ -18,12 +18,13 @@ public record SlaPolicyDTO(
         @NotNull(message = "O tempo de resolução é obrigatório")
         @Positive
         Integer resolutionTimeMinutes,
+
         Boolean operationalHoursOnly,
         Boolean isActive,
+
         @NotNull(message = "A categoria é obrigatória")
         Long categoryId,
+
         @NotNull(message = "O ID do tenant é obrigatório")
-        Long tenantId,
-        @NotNull(message = "O ID de Priority é obrigatório")
-        Long priorityId
+        Long tenantId
 ){}

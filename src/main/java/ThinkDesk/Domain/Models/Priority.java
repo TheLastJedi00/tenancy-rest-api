@@ -14,7 +14,4 @@ public class Priority {
     private String name;
     @ManyToOne(fetch = FetchType.LAZY)
     private Ticket ticket;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tenant_id", nullable = false)
-    private Tenant tenant;
 }
