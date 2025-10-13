@@ -27,11 +27,9 @@ public class Ticket {
     @Enumerated(EnumType.STRING)
     private TicketPriority priority;
     @Enumerated(EnumType.STRING)
-    private TicketCategory ticketCategory;
+    private TicketCategory category;
     @ManyToOne
     private Technician technician;
-    @OneToMany
-    private Category category;
     @ManyToOne(fetch = FetchType.LAZY)
     private Tenant tenant;
     private LocalDateTime resolutionDueDate;
