@@ -1,6 +1,8 @@
 package ThinkDesk.Domain.Services;
 
 import ThinkDesk.Application.DTOs.SlaPolicyDTO;
+import ThinkDesk.Domain.Models.Category;
+import ThinkDesk.Domain.Models.Priority;
 import ThinkDesk.Domain.Models.SlaPolicy;
 import ThinkDesk.Domain.Models.Tenant;
 import ThinkDesk.Domain.Repositories.SlaPolicyRepository;
@@ -17,11 +19,15 @@ public class SlaPolicyService {
 
     private final SlaPolicyRepository slaPolicyRepository;
     private final TenantRepository tenantRepository;
+    private final CategoryService categoryService;
+    private final PriorityService priorityService;
     private final SlaPolicyMapper slaPolicyMapper;
 
-    public SlaPolicyService(SlaPolicyRepository slaPolicyRepository, TenantRepository tenantRepository, SlaPolicyMapper slaPolicyMapper) {
+    public SlaPolicyService(SlaPolicyRepository slaPolicyRepository, TenantRepository tenantRepository, CategoryService categoryService, PriorityService priorityService, SlaPolicyMapper slaPolicyMapper) {
         this.slaPolicyRepository = slaPolicyRepository;
         this.tenantRepository = tenantRepository;
+        this.categoryService = categoryService;
+        this.priorityService = priorityService;
         this.slaPolicyMapper = slaPolicyMapper;
     }
 
@@ -46,9 +52,15 @@ public class SlaPolicyService {
         }
         Tenant tenant = tenantRepository.findById(dto.tenantId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tenant com ID " + dto.tenantId() + " não encontrado."));
-
+        Category category = categoryService.getById(dto.categoryId());
         SlaPolicy slaPolicy = slaPolicyMapper.toEntity(dto);
+        Priority priority = priorityService.getById(dto.priorityId());
+
         slaPolicy.setTenant(tenant);
+        slaPolicy.setCategory(category);
+        slaPolicy.setPriority(priority);
+
+
         return slaPolicyRepository.save(slaPolicy);
     }
     public Page<SlaPolicy> getAll(Pageable pageable) {

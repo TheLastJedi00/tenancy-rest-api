@@ -19,6 +19,8 @@ public class TicketLog {
     @ManyToOne
     private Ticket ticket;
     private boolean isPrivate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Tenant tenant;
 
     public TicketLog(TicketLogDTO dto, Ticket ticket) {
         this.content = dto.content();

@@ -1,7 +1,5 @@
 package ThinkDesk.Domain.Models;
 
-import ThinkDesk.Domain.Models.Enums.TicketCategory;
-import ThinkDesk.Domain.Models.Enums.TicketPriority;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -23,4 +21,7 @@ public class SlaPolicy {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+    @ManyToOne
+    @JoinColumn(name = "priority_id")
+    private Priority priority;
 }
