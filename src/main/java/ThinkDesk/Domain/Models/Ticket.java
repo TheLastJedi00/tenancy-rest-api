@@ -1,6 +1,7 @@
 package ThinkDesk.Domain.Models;
 
 import ThinkDesk.Application.DTOs.TicketDTO;
+import ThinkDesk.Application.DTOs.TicketKeysDto;
 import ThinkDesk.Application.DTOs.TicketUpdateDto;
 import ThinkDesk.Domain.Models.Enums.TicketCategory;
 import ThinkDesk.Domain.Models.Enums.TicketPriority;
@@ -28,48 +29,47 @@ public class Ticket {
     @Enumerated(EnumType.STRING)
     private TicketStatus status;
     @Enumerated(EnumType.STRING)
-    private TicketPriority priority;
-    @Enumerated(EnumType.STRING)
-    private TicketCategory category;
-    @ManyToOne
+    private TicketCategory ticketType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "technician_id")
     private Technician technician;
-<<<<<<< HEAD
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "priority_id")
     private Priority priority;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tenant_id")
+    private Tenant tenant;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User requester;
 
-    public Ticket(TicketDTO data) {
+    public Ticket(TicketDTO data, TicketKeysDto keys) {
         this.title = data.title();
         this.description = data.description();
-        this.resolutionDueDate = data.resolutionDueDate();
+        this.createdAt = LocalDateTime.now();
         this.status = TicketStatus.OPEN;
         this.ticketType = data.ticketType();
+        this.category = keys.category();
+        this.technician = keys.technician();
+        this.priority = keys.priority();
+        this.tenant = keys.tenant();
+        this.requester = keys.requester();
     }
 
-    public void update(TicketUpdateDto data) {
-        if (data.title() != null) {
-            this.title = data.title();
-        }
-        if (data.description() != null) {
-            this.description = data.description();
-        }
-        if (data.closedAt() != null) {
-            this.closedAt = data.closedAt();
-        }
-        if (data.resolutionDueDate() != null) {
-            this.resolutionDueDate = data.resolutionDueDate();
-        }
-        if (data.status() != null) {
-            this.status = data.status();
-        }
-        if (data.ticketType() != null) {
-            this.ticketType = data.ticketType();
-        }
+    public Ticket update(TicketUpdateDto data, TicketKeysDto keys) {
+        if(data.title() != null) this.title = data.title();
+        if(data.description() != null) this.description = data.description();
+        if(data.status() != null) this.status = data.status();
+        if(data.ticketType() != null) this.ticketType = data.ticketType();
+        if(data.closedAt() != null) this.closedAt = data.closedAt();
+        if(data.category() != null) this.category = keys.category();
+        if(data.technician() != null) this.technician = keys.technician();
+        if(data.priority() != null) this.priority = keys.priority();
+        if(data.tenant() != null) this.tenant = keys.tenant();
+        if(data.requester() != null) this.requester = keys.requester();
+        return this;
     }
-=======
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Tenant tenant;
-    private LocalDateTime resolutionDueDate;
->>>>>>> 13f5ad96bf07adf610ccd2002c42b079177aa24a
 }

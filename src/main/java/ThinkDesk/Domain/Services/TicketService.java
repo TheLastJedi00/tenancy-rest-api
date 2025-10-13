@@ -1,6 +1,7 @@
 package ThinkDesk.Domain.Services;
 
 import ThinkDesk.Application.DTOs.TicketDTO;
+import ThinkDesk.Application.DTOs.TicketKeysDto;
 import ThinkDesk.Application.DTOs.TicketUpdateDto;
 import ThinkDesk.Domain.Models.Enums.TicketStatus;
 import ThinkDesk.Infra.Mapper.TicketMapper;
@@ -42,13 +43,17 @@ public class TicketService {
     }
 
     public Ticket update(Long id, TicketUpdateDto data) {
-        Ticket ticket = getById(id);
-        ticket.update(data);
-        if (data.category() != null) ticket.setCategory(categoryService.getById(data.category()));
-        if (data.technician() != null) ticket.setTechnician(technicianService.getById(data.technician()));
-        if (data.tenant() != null) ticket.setTenant(tenantService.getById(data.tenant()));
-        if (data.requester() != null) ticket.setRequester(userService.getById(data.requester()));
-        if (data.priority() != null) ticket.setPriority(priorityService.getById(data.priority()));
+        TicketKeysDto ticketKeys = new TicketKeysDto(
+                categoryService.getById(data.category()),
+                technicianService.getById(data.technician()),
+                tenantService.getById(data.tenant()),
+                userService.getById(data.requester()),
+                priorityService.getById(data.priority())
+        );
+        Ticket foundTicket = ticketRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ticket com ID " + id + " não encontrado"));
+
+        Ticket ticket = foundTicket.update(data, ticketKeys);
 
         return ticketRepository.save(ticket);
     }
@@ -57,18 +62,15 @@ public class TicketService {
         ticketRepository.deleteById(id);
     }
 
-    public Ticket create(TicketDTO data) {
-        Ticket ticket = new Ticket(data);
-        ticket.setStatus(TicketStatus.OPEN);
-        ticket.setCreatedAt(LocalDateTime.now());
-        ticket.setCategory(categoryService.getById(data.category()));
-        ticket.setTechnician(technicianService.getById(data.technician()));
-        ticket.setTenant(tenantService.getById(data.tenant()));
-        ticket.setRequester(userService.getById(data.requester()));
-        String translatedDescription = translationService.translate(ticket.getDescription());
-        ticket.setTranslatedDescription(translatedDescription);
-        ticket.setPriority(priorityService.getById(data.priority()));
-
+    public Ticket create(TicketDTO data){
+        TicketKeysDto ticketKeys = new TicketKeysDto(
+                categoryService.getById(data.category()),
+                technicianService.getById(data.technician()),
+                tenantService.getById(data.tenant()),
+                userService.getById(data.requester()),
+                priorityService.getById(data.priority())
+        );
+        Ticket ticket = new Ticket(data, ticketKeys);
         return ticketRepository.save(ticket);
     }
 
