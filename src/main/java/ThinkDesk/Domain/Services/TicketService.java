@@ -1,6 +1,7 @@
 package ThinkDesk.Domain.Services;
 
 import ThinkDesk.Application.DTOs.TicketDTO;
+import ThinkDesk.Application.DTOs.TicketUpdateDto;
 import ThinkDesk.Domain.Models.Enums.TicketStatus;
 import ThinkDesk.Infra.Mapper.TicketMapper;
 import ThinkDesk.Domain.Models.Ticket;
@@ -16,11 +17,21 @@ import java.util.List;
 public class TicketService {
 
     private final TicketRepository ticketRepository;
+    private final CategoryService categoryService;
+    private final TechnicianService technicianService;
+    private final PriorityService priorityService;
+    private final TenantService tenantService;
+    private final UserService userService;
     private final TicketMapper ticketMapper;
     private final TranslationService translationService;
 
-    public TicketService(TicketRepository ticketRepository, TicketMapper ticketMapper, TranslationService translationService) {
+    public TicketService(TicketRepository ticketRepository, CategoryService categoryService, TechnicianService technicianService, PriorityService priorityService, TenantService tenantService, UserService userService, TicketMapper ticketMapper, TranslationService translationService) {
         this.ticketRepository = ticketRepository;
+        this.categoryService = categoryService;
+        this.technicianService = technicianService;
+        this.priorityService = priorityService;
+        this.tenantService = tenantService;
+        this.userService = userService;
         this.ticketMapper = ticketMapper;
         this.translationService = translationService;
     }
@@ -30,9 +41,15 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Ticket com ID " + id + " não encontrado."));
     }
 
-    public Ticket update(Long id, TicketDTO dto) {
+    public Ticket update(Long id, TicketUpdateDto data) {
         Ticket ticket = getById(id);
-        ticketMapper.updateEntityFromDto(dto, ticket);
+        ticket.update(data);
+        if (data.category() != null) ticket.setCategory(categoryService.getById(data.category()));
+        if (data.technician() != null) ticket.setTechnician(technicianService.getById(data.technician()));
+        if (data.tenant() != null) ticket.setTenant(tenantService.getById(data.tenant()));
+        if (data.requester() != null) ticket.setRequester(userService.getById(data.requester()));
+        if (data.priority() != null) ticket.setPriority(priorityService.getById(data.priority()));
+
         return ticketRepository.save(ticket);
     }
 
@@ -40,12 +57,17 @@ public class TicketService {
         ticketRepository.deleteById(id);
     }
 
-    public Ticket create(TicketDTO dto) {
-        Ticket ticket = ticketMapper.toEntity(dto);
+    public Ticket create(TicketDTO data) {
+        Ticket ticket = new Ticket(data);
         ticket.setStatus(TicketStatus.OPEN);
         ticket.setCreatedAt(LocalDateTime.now());
+        ticket.setCategory(categoryService.getById(data.category()));
+        ticket.setTechnician(technicianService.getById(data.technician()));
+        ticket.setTenant(tenantService.getById(data.tenant()));
+        ticket.setRequester(userService.getById(data.requester()));
         String translatedDescription = translationService.translate(ticket.getDescription());
         ticket.setTranslatedDescription(translatedDescription);
+        ticket.setPriority(priorityService.getById(data.priority()));
 
         return ticketRepository.save(ticket);
     }

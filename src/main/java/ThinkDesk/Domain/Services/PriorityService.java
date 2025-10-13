@@ -24,13 +24,7 @@ public class PriorityService {
     }
 
     public Priority create(PriorityDto data){
-        Ticket ticket = ticketService.getById(data.ticketId());
-        Tenant tenant = tenantService.getById(data.tenantId());
-
         Priority priority = priorityMapper.toEntity(data);
-        priority.setTicket(ticket);
-        priority.setTenant(tenant);
-
         return priorityRepository.save(priority);
     }
 

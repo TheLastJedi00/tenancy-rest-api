@@ -15,13 +15,17 @@ public record TicketDTO(
         @NotBlank
         String description,
         @NotBlank
-        TicketPriority priority,
-        @NotBlank
         LocalDateTime resolutionDueDate,
         @NotBlank
-        TicketCategory category,
+        TicketCategory ticketType,
         @NotBlank
-        Technician technician,
+        Long category,
         @NotBlank
-        Tenant tenant
+        Long technician,
+        @NotBlank
+        Long tenant,
+        @NotBlank
+        Long requester,
+        @NotBlank
+        Long priority
 ){}

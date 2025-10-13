@@ -1,6 +1,7 @@
 package ThinkDesk.Domain.Models;
 
 import ThinkDesk.Application.DTOs.TicketDTO;
+import ThinkDesk.Application.DTOs.TicketUpdateDto;
 import ThinkDesk.Domain.Models.Enums.TicketCategory;
 import ThinkDesk.Domain.Models.Enums.TicketPriority;
 import ThinkDesk.Domain.Models.Enums.TicketStatus;
@@ -14,6 +15,8 @@ import java.util.Set;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,4 +62,37 @@ public class Ticket {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "technician_id")
     private Technician technician;
+
+    @ManyToOne
+    @JoinColumn(name = "priority_id")
+    private Priority priority;
+
+    public Ticket(TicketDTO data) {
+        this.title = data.title();
+        this.description = data.description();
+        this.resolutionDueDate = data.resolutionDueDate();
+        this.status = TicketStatus.OPEN;
+        this.ticketType = data.ticketType();
+    }
+
+    public void update(TicketUpdateDto data) {
+        if (data.title() != null) {
+            this.title = data.title();
+        }
+        if (data.description() != null) {
+            this.description = data.description();
+        }
+        if (data.closedAt() != null) {
+            this.closedAt = data.closedAt();
+        }
+        if (data.resolutionDueDate() != null) {
+            this.resolutionDueDate = data.resolutionDueDate();
+        }
+        if (data.status() != null) {
+            this.status = data.status();
+        }
+        if (data.ticketType() != null) {
+            this.ticketType = data.ticketType();
+        }
+    }
 }
