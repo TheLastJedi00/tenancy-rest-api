@@ -39,13 +39,12 @@ public class Technician implements UserDetails {
     @ManyToOne
     private Team team;
 
-    public Technician(TechnicianDTO dto, TechnicianLevel status) {
+    public Technician(TechnicianDTO dto) {
         this.name = dto.name();
         this.email = dto.email();
         this.password = dto.password();
-        this.level = status;
+        this.level = dto.level();
         this.active = dto.active();
-        this.tenant = dto.tenant();
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
