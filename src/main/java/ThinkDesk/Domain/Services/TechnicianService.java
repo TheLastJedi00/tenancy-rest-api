@@ -1,9 +1,12 @@
 package ThinkDesk.Domain.Services;
 
 import ThinkDesk.Application.DTOs.TechnicianDTO;
+import ThinkDesk.Application.DTOs.TechnicianKeysDto;
+import ThinkDesk.Application.DTOs.TechnicianUpdateDto;
 import ThinkDesk.Domain.Models.Enums.TechnicianLevel;
 import ThinkDesk.Domain.Models.Technician;
 import ThinkDesk.Domain.Repositories.TechnicianRepository;
+import ThinkDesk.Domain.Repositories.TenantRepository;
 import ThinkDesk.Infra.Mapper.TechnicianMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -14,10 +17,16 @@ import java.util.List;
 public class TechnicianService {
 
     private final TechnicianRepository technicianRepository;
+    private final TenantService tenantService;
+    private final TeamService teamService;
+    private final RoleService roleService;
     private final TechnicianMapper technicianMapper;
 
-    public TechnicianService(TechnicianRepository technicianRepository, TechnicianMapper technicianMapper) {
+    public TechnicianService(TechnicianRepository technicianRepository, TenantService tenantService, TeamService teamService, RoleService roleService, TechnicianMapper technicianMapper) {
         this.technicianRepository = technicianRepository;
+        this.tenantService = tenantService;
+        this.teamService = teamService;
+        this.roleService = roleService;
         this.technicianMapper = technicianMapper;
     }
 
@@ -30,9 +39,14 @@ public class TechnicianService {
         return technicianRepository.findByTeamId(teamId);
     }
 
-    public Technician update(Long id, TechnicianDTO dto) {
-        Technician technician = getById(id);
-        technicianMapper.updateEntityFromDto(dto, technician);
+    public Technician update(Long id, TechnicianUpdateDto dto) {
+        Technician found = getById(id);
+        TechnicianKeysDto keys = new TechnicianKeysDto(
+                tenantService.getById(dto.tenantId()),
+                teamService.getById(dto.teamId()),
+                roleService.getById(dto.roleId())
+        );
+        Technician technician = found.update(dto, keys);
         return technicianRepository.save(technician);
     }
 
@@ -45,7 +59,7 @@ public class TechnicianService {
     }
 
     public Technician create(TechnicianDTO dto) {
-        Technician technician = new Technician(dto, TechnicianLevel.L1);
+        Technician technician = new Technician(dto);
         return technicianRepository.save(technician);
     }
 

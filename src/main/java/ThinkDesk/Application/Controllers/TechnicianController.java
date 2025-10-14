@@ -1,6 +1,7 @@
 package ThinkDesk.Application.Controllers;
 
 import ThinkDesk.Application.DTOs.TechnicianDTO;
+import ThinkDesk.Application.DTOs.TechnicianUpdateDto;
 import ThinkDesk.Domain.Models.Technician;
 import ThinkDesk.Domain.Services.TechnicianService;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class TechnicianController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Technician> update(@PathVariable Long id, @RequestBody TechnicianDTO data) {
+    public ResponseEntity<Technician> update(@PathVariable Long id, @RequestBody TechnicianUpdateDto data) {
         return ResponseEntity.ok().body(TechnicianService.update(id, data));
     }
 
