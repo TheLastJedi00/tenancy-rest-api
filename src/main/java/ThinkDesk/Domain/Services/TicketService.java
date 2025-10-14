@@ -67,6 +67,8 @@ public class TicketService {
                 priorityService.getById(data.priority())
         );
         Ticket ticket = new Ticket(data, ticketKeys);
+        ticket.setTranslatedDescription(
+                translationService.translate(data.description()));
         return ticketRepository.save(ticket);
     }
 
