@@ -4,14 +4,12 @@ import ThinkDesk.Application.DTOs.TicketDTO;
 import ThinkDesk.Application.DTOs.TicketKeysDto;
 import ThinkDesk.Application.DTOs.TicketUpdateDto;
 import ThinkDesk.Domain.Models.Enums.TicketStatus;
-import ThinkDesk.Infra.Mapper.TicketMapper;
 import ThinkDesk.Domain.Models.Ticket;
 import ThinkDesk.Domain.Repositories.TicketRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -23,17 +21,15 @@ public class TicketService {
     private final PriorityService priorityService;
     private final TenantService tenantService;
     private final UserService userService;
-    private final TicketMapper ticketMapper;
     private final TranslationService translationService;
 
-    public TicketService(TicketRepository ticketRepository, CategoryService categoryService, TechnicianService technicianService, PriorityService priorityService, TenantService tenantService, UserService userService, TicketMapper ticketMapper, TranslationService translationService) {
+    public TicketService(TicketRepository ticketRepository, CategoryService categoryService, TechnicianService technicianService, PriorityService priorityService, TenantService tenantService, UserService userService, TranslationService translationService) {
         this.ticketRepository = ticketRepository;
         this.categoryService = categoryService;
         this.technicianService = technicianService;
         this.priorityService = priorityService;
         this.tenantService = tenantService;
         this.userService = userService;
-        this.ticketMapper = ticketMapper;
         this.translationService = translationService;
     }
 
