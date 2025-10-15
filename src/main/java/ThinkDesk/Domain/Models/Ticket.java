@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 
 @Entity
 @Data
@@ -26,6 +27,7 @@ public class Ticket {
     private String translatedDescription;
     private LocalDateTime createdAt;
     private LocalDateTime closedAt;
+    private LocalDateTime resolutionDueDate;
     @Enumerated(EnumType.STRING)
     private TicketStatus status;
     @Enumerated(EnumType.STRING)
@@ -45,8 +47,11 @@ public class Ticket {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User requester;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sla_policy_id")
+    private SlaPolicy slaPolicy;
 
-    public Ticket(TicketDTO data, TicketKeysDto keys) {
+    public Ticket(TicketDTO data, TicketKeysDto keys, SlaPolicy slaPolicy) {
         this.title = data.title();
         this.description = data.description();
         this.createdAt = LocalDateTime.now();
@@ -57,6 +62,7 @@ public class Ticket {
         this.priority = keys.priority();
         this.tenant = keys.tenant();
         this.requester = keys.requester();
+        this.slaPolicy = slaPolicy;
     }
 
     public Ticket update(TicketUpdateDto data, TicketKeysDto keys) {
@@ -72,4 +78,5 @@ public class Ticket {
         if(data.requester() != null) this.requester = keys.requester();
         return this;
     }
+
 }

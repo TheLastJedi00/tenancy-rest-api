@@ -7,7 +7,7 @@ public record TechnicianUpdateDto(
         String email,
         String password,
         TechnicianLevel level,
-        boolean active,
+        Boolean active,
         Long teamId,
         Long tenantId,
         Long roleId

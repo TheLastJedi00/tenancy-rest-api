@@ -39,4 +39,13 @@ public class SlaPolicy {
         this.category = keys.category();
         this.priority = keys.priority();
     }
+
+    public SlaPolicy update(SlaPolicyDTO data){
+        if(data.name() != null) this.name = data.name();
+        if(data.responseTimeMinutes() != null) this.responseTimeInMinutes = data.responseTimeMinutes();
+        if(data.resolutionTimeMinutes() != null) this.incidentResolutionTimeInMinutes = data.resolutionTimeMinutes();
+        if(data.operationalHoursOnly() != null) this.operationalHoursOnly = data.operationalHoursOnly();
+        if(data.isActive() != null) this.isActive = data.isActive();
+        return this;
+    }
 }

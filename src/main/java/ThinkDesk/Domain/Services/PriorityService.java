@@ -4,6 +4,7 @@ import ThinkDesk.Application.DTOs.PriorityDto;
 import ThinkDesk.Domain.Models.Priority;
 import ThinkDesk.Domain.Repositories.PriorityRepository;
 import ThinkDesk.Infra.Mapper.PriorityMapper;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -19,5 +20,10 @@ public class PriorityService {
 
     public Priority create(PriorityDto priorityDto){
         return priorityRepository.save(priorityMapper.toEntity(priorityDto));
+    }
+
+    public Priority getById(Long id) {
+        return priorityRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Prioridade com id " + id + " não encontrada"));
     }
 }

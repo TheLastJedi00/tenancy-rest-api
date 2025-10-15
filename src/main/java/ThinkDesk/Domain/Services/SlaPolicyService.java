@@ -1,16 +1,10 @@
 package ThinkDesk.Domain.Services;
 
-import ThinkDesk.Application.DTOs.CategoryDto;
 import ThinkDesk.Application.DTOs.SlaPolicyDTO;
 import ThinkDesk.Application.DTOs.SlaPolicyKeysDto;
-import ThinkDesk.Domain.Models.Category;
 import ThinkDesk.Domain.Models.SlaPolicy;
-import ThinkDesk.Domain.Models.Tenant;
 import ThinkDesk.Domain.Repositories.SlaPolicyRepository;
-import ThinkDesk.Domain.Repositories.TenantRepository;
-import ThinkDesk.Infra.Exception.ResourceNotFoundException;
-import ThinkDesk.Infra.Mapper.SlaPolicyMapper;
-import jakarta.persistence.EntityExistsException;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,14 +16,12 @@ public class SlaPolicyService {
     private final TenantService tenantService;
     private final CategoryService categoryService;
     private final PriorityService priorityService;
-    private final SlaPolicyMapper slaPolicyMapper;
 
-    public SlaPolicyService(SlaPolicyRepository slaPolicyRepository, TenantService tenantService, CategoryService categoryService, PriorityService priorityService, SlaPolicyMapper slaPolicyMapper) {
+    public SlaPolicyService(SlaPolicyRepository slaPolicyRepository, TenantService tenantService, CategoryService categoryService, PriorityService priorityService) {
         this.slaPolicyRepository = slaPolicyRepository;
         this.tenantService = tenantService;
         this.categoryService = categoryService;
         this.priorityService = priorityService;
-        this.slaPolicyMapper = slaPolicyMapper;
     }
 
     public SlaPolicy getById(Long id) {
@@ -37,9 +29,9 @@ public class SlaPolicyService {
                 .orElseThrow(() -> new RuntimeException("SlaPolicy com ID " + id + " não encontrado."));
     }
 
-    public SlaPolicy update(Long id, SlaPolicyDTO dto) {
-        SlaPolicy slaPolicy = getById(id);
-        slaPolicyMapper.updateEntityFromDto(dto, slaPolicy);
+    public SlaPolicy update(Long id, SlaPolicyDTO data) {
+        SlaPolicy found = getById(id);
+        SlaPolicy slaPolicy = found.update(data);
         return slaPolicyRepository.save(slaPolicy);
     }
 
@@ -49,7 +41,7 @@ public class SlaPolicyService {
 
     public SlaPolicy create(SlaPolicyDTO data) {
         SlaPolicyKeysDto keys = new SlaPolicyKeysDto(
-                tenantService.create(data.tenantId()),
+                tenantService.getById(data.tenantId()),
                 categoryService.create(data.categoryDto()),
                 priorityService.create(data.priorityDto())
         );
@@ -62,5 +54,11 @@ public class SlaPolicyService {
 
     public Page<SlaPolicy> getAllByTenant(Long tenantId, Pageable pageable) {
         return slaPolicyRepository.findByTenantId(tenantId, pageable);
+    }
+
+    public SlaPolicy getByTenantAndCategoryAndPriority(Long tenant,Long category,Long priority) {
+        return slaPolicyRepository.findByTenantIdAndCategoryIdAndPriorityId(tenant, category, priority)
+                .orElseThrow(() -> new RuntimeException("SlaPolicy não encontrada"));
+
     }
 }

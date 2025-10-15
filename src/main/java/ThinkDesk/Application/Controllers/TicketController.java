@@ -1,6 +1,7 @@
 package ThinkDesk.Application.Controllers;
 
 import ThinkDesk.Application.DTOs.TicketDTO;
+import ThinkDesk.Application.DTOs.TicketUpdateDto;
 import ThinkDesk.Domain.Models.Ticket;
 import ThinkDesk.Domain.Services.TicketService;
 import jakarta.validation.Valid;
@@ -36,7 +37,7 @@ public class TicketController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Ticket> update(@PathVariable Long id, @RequestBody @Valid TicketDTO data) {
+    public ResponseEntity<Ticket> update(@PathVariable Long id, @RequestBody @Valid TicketUpdateDto data) {
         return ResponseEntity.ok().body(ticketService.update(id, data));
     }
 

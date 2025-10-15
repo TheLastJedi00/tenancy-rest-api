@@ -4,6 +4,7 @@ import ThinkDesk.Application.DTOs.TicketDTO;
 import ThinkDesk.Application.DTOs.TicketKeysDto;
 import ThinkDesk.Application.DTOs.TicketUpdateDto;
 import ThinkDesk.Domain.Models.Enums.TicketStatus;
+import ThinkDesk.Domain.Models.SlaPolicy;
 import ThinkDesk.Domain.Models.Ticket;
 import ThinkDesk.Domain.Repositories.TicketRepository;
 import org.springframework.data.domain.Page;
@@ -20,15 +21,17 @@ public class TicketService {
     private final TechnicianService technicianService;
     private final PriorityService priorityService;
     private final TenantService tenantService;
+    private final SlaPolicyService slaPolicyService;
     private final UserService userService;
     private final TranslationService translationService;
 
-    public TicketService(TicketRepository ticketRepository, CategoryService categoryService, TechnicianService technicianService, PriorityService priorityService, TenantService tenantService, UserService userService, TranslationService translationService) {
+    public TicketService(TicketRepository ticketRepository, CategoryService categoryService, TechnicianService technicianService, PriorityService priorityService, TenantService tenantService, SlaPolicyService slaPolicyService, UserService userService, TranslationService translationService) {
         this.ticketRepository = ticketRepository;
         this.categoryService = categoryService;
         this.technicianService = technicianService;
         this.priorityService = priorityService;
         this.tenantService = tenantService;
+        this.slaPolicyService = slaPolicyService;
         this.userService = userService;
         this.translationService = translationService;
     }
@@ -66,9 +69,11 @@ public class TicketService {
                 userService.getById(data.requester()),
                 priorityService.getById(data.priority())
         );
-        Ticket ticket = new Ticket(data, ticketKeys);
+        SlaPolicy slaPolicy = slaPolicyService.getByTenantAndCategoryAndPriority(data.tenant(), data.category(), data.priority());
+        Ticket ticket = new Ticket(data, ticketKeys, slaPolicy);
         ticket.setTranslatedDescription(
                 translationService.translate(data.description()));
+        ticket.setResolutionDueDate(ticket.getCreatedAt().plusMinutes(slaPolicy.getIncidentResolutionTimeInMinutes()));
         return ticketRepository.save(ticket);
     }
 

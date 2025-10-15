@@ -25,7 +25,7 @@ public record SlaPolicyDTO(
         CategoryDto categoryDto,
 
         @NotNull(message = "O ID do tenant é obrigatório")
-        TenantDto tenantId,
+        Long tenantId,
 
         @NotNull(message = "A prioridade é obrigatória")
         PriorityDto priorityDto
