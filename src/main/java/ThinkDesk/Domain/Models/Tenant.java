@@ -19,5 +19,5 @@ public class Tenant {
     private String taxID; //CNPJ
     private LocalDateTime createdAt;
     private boolean active;
-    private String settings; //Layout customizations JSON
+    private String settings;
 }

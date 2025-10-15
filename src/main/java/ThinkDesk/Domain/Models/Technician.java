@@ -1,7 +1,10 @@
 package ThinkDesk.Domain.Models;
 
 import ThinkDesk.Application.DTOs.TechnicianDTO;
+import ThinkDesk.Application.DTOs.TechnicianKeysDto;
+import ThinkDesk.Application.DTOs.TechnicianUpdateDto;
 import ThinkDesk.Domain.Models.Enums.TechnicianLevel;
+import ThinkDesk.Domain.Services.TechnicianService;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,13 +42,12 @@ public class Technician implements UserDetails {
     @ManyToOne
     private Team team;
 
-    public Technician(TechnicianDTO dto, TechnicianLevel status) {
+    public Technician(TechnicianDTO dto) {
         this.name = dto.name();
         this.email = dto.email();
         this.password = dto.password();
-        this.level = status;
+        this.level = dto.level();
         this.active = dto.active();
-        this.tenant = dto.tenant();
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -72,5 +74,17 @@ public class Technician implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.active;
+    }
+
+    public Technician update(TechnicianUpdateDto dto, TechnicianKeysDto keys) {
+        if(dto.name() != null) this.name = dto.name();
+        if(dto.email() != null) this.email = dto.email();
+        if(dto.password() != null) this.password = dto.password();
+        if(dto.level() != null) this.level = dto.level();
+        this.active = dto.active();
+        if(keys.team() != null) this.team = keys.team();
+        if(keys.tenant() != null) this.tenant = keys.tenant();
+        if(keys.role() != null) this.roles = Set.of(keys.role());
+        return this;
     }
 }

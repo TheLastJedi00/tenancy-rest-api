@@ -2,21 +2,20 @@ package ThinkDesk.Application.DTOs;
 
 import ThinkDesk.Domain.Models.Enums.TechnicianLevel;
 import ThinkDesk.Domain.Models.Tenant;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record TechnicianDTO(
         @NotNull
         Long id,
-        @NotNull
+        @NotBlank
         String name,
-        @NotNull
+        @NotBlank
         String email,
-        @NotNull
+        @NotBlank
         String password,
         @NotNull
         TechnicianLevel level,
         @NotNull
-        boolean active,
-        @NotNull
-        Tenant tenant
+        boolean active
 ) {}
