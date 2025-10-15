@@ -1,5 +1,7 @@
 package ThinkDesk.Domain.Models;
 
+import ThinkDesk.Application.DTOs.SlaPolicyDTO;
+import ThinkDesk.Application.DTOs.SlaPolicyKeysDto;
 import ThinkDesk.Domain.Models.Enums.TicketCategory;
 import ThinkDesk.Domain.Models.Enums.TicketPriority;
 import jakarta.persistence.*;
@@ -23,4 +25,18 @@ public class SlaPolicy {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+    @ManyToOne
+    @JoinColumn(name = "priority_id")
+    private Priority priority;
+
+    public SlaPolicy(SlaPolicyDTO data, SlaPolicyKeysDto keys) {
+        this.name = data.name();
+        this.responseTimeInMinutes = data.responseTimeMinutes();
+        this.incidentResolutionTimeInMinutes = data.resolutionTimeMinutes();
+        this.operationalHoursOnly = data.operationalHoursOnly();
+        this.isActive = data.isActive();
+        this.tenant = keys.tenant();
+        this.category = keys.category();
+        this.priority = keys.priority();
+    }
 }

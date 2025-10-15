@@ -11,5 +11,7 @@ public record SlaPolicyResponseDTO(
         boolean operationalHoursOnly,
         boolean isActive,
         TicketPriority priority,
-        Long tenantId
+        TenantDto tenantDto,
+        CategoryDto categoryDto,
+        PriorityDto priorityDto
 ) {}

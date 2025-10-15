@@ -1,6 +1,5 @@
 package ThinkDesk.Application.DTOs;
 
-import ThinkDesk.Domain.Models.Enums.TicketPriority;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -13,18 +12,22 @@ public record SlaPolicyDTO(
 
         @NotNull(message = "O tempo de resposta é obrigatório")
         @Positive
-        Integer responseTimeMinutes,
+        Long responseTimeMinutes,
 
         @NotNull(message = "O tempo de resolução é obrigatório")
         @Positive
-        Integer resolutionTimeMinutes,
+        Long resolutionTimeMinutes,
 
         Boolean operationalHoursOnly,
         Boolean isActive,
 
         @NotNull(message = "A categoria é obrigatória")
-        Long categoryId,
+        CategoryDto categoryDto,
 
         @NotNull(message = "O ID do tenant é obrigatório")
-        Long tenantId
+        TenantDto tenantId,
+
+        @NotNull(message = "A prioridade é obrigatória")
+        PriorityDto priorityDto
+
 ){}

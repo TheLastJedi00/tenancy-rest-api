@@ -1,6 +1,9 @@
 package ThinkDesk.Domain.Services;
 
+import ThinkDesk.Application.DTOs.CategoryDto;
 import ThinkDesk.Application.DTOs.SlaPolicyDTO;
+import ThinkDesk.Application.DTOs.SlaPolicyKeysDto;
+import ThinkDesk.Domain.Models.Category;
 import ThinkDesk.Domain.Models.SlaPolicy;
 import ThinkDesk.Domain.Models.Tenant;
 import ThinkDesk.Domain.Repositories.SlaPolicyRepository;
@@ -16,12 +19,16 @@ import org.springframework.stereotype.Service;
 public class SlaPolicyService {
 
     private final SlaPolicyRepository slaPolicyRepository;
-    private final TenantRepository tenantRepository;
+    private final TenantService tenantService;
+    private final CategoryService categoryService;
+    private final PriorityService priorityService;
     private final SlaPolicyMapper slaPolicyMapper;
 
-    public SlaPolicyService(SlaPolicyRepository slaPolicyRepository, TenantRepository tenantRepository, SlaPolicyMapper slaPolicyMapper) {
+    public SlaPolicyService(SlaPolicyRepository slaPolicyRepository, TenantService tenantService, CategoryService categoryService, PriorityService priorityService, SlaPolicyMapper slaPolicyMapper) {
         this.slaPolicyRepository = slaPolicyRepository;
-        this.tenantRepository = tenantRepository;
+        this.tenantService = tenantService;
+        this.categoryService = categoryService;
+        this.priorityService = priorityService;
         this.slaPolicyMapper = slaPolicyMapper;
     }
 
@@ -40,15 +47,13 @@ public class SlaPolicyService {
         slaPolicyRepository.deleteById(id);
     }
 
-    public SlaPolicy create(SlaPolicyDTO dto) {
-        if (slaPolicyRepository.existsByTenantIdAndCategoryId(dto.tenantId(), dto.categoryId())) {
-            throw new EntityExistsException("Já existe uma política de SLA para esta prioridade neste tenant.");
-        }
-        Tenant tenant = tenantRepository.findById(dto.tenantId())
-                .orElseThrow(() -> new ResourceNotFoundException("Tenant com ID " + dto.tenantId() + " não encontrado."));
-
-        SlaPolicy slaPolicy = slaPolicyMapper.toEntity(dto);
-        slaPolicy.setTenant(tenant);
+    public SlaPolicy create(SlaPolicyDTO data) {
+        SlaPolicyKeysDto keys = new SlaPolicyKeysDto(
+                tenantService.create(data.tenantId()),
+                categoryService.create(data.categoryDto()),
+                priorityService.create(data.priorityDto())
+        );
+        SlaPolicy slaPolicy = new SlaPolicy(data, keys);
         return slaPolicyRepository.save(slaPolicy);
     }
     public Page<SlaPolicy> getAll(Pageable pageable) {
