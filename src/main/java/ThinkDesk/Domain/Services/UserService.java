@@ -26,7 +26,7 @@ public class UserService {
         User user = userMapper.toEntity(userDto);
         Tenant tenant = tenantService.getById(userDto.tenantId());
         user.setTenant(tenant);
-        return userRepository.save(new User());
+        return userRepository.save(user);
     }
 
     public List<User> getAll() {
