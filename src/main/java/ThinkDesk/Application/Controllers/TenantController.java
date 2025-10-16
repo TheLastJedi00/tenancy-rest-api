@@ -26,6 +26,7 @@ public class TenantController {
     }
     @DeleteMapping("{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
+        tenantService.delete(id);
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/{id}")

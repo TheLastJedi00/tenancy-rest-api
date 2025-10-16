@@ -7,6 +7,7 @@ import ThinkDesk.Domain.Repositories.TenantRepository;
 import ThinkDesk.Infra.Mapper.TenantMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,12 +23,18 @@ public class TenantService {
         this.cnpjService = cnpjService;
     }
 
-    public Tenant create(TenantDto tenantDto) {
-        String cnpj = tenantDto.taxID();
+    public Tenant create(TenantDto data) {
+        Tenant existingTenant = tenantRepository.getReferenceByTaxID(data.taxID());
+        if (existingTenant != null) {
+            throw new RuntimeException("CNPJ já está sendo usado por outro Tenant");
+        }
+        String cnpj = data.taxID();
         CnpjDto cnpjResponse = cnpjService.getTenantByCnpj(cnpj);
         if(cnpjResponse.razaoSocial() == null) throw  new RuntimeException("CNPJ not found");
-        Tenant tenant = tenantMapper.toEntity(tenantDto);
+        Tenant tenant = tenantMapper.toEntity(data);
         tenant.setLegalName(cnpjResponse.razaoSocial());
+        tenant.setCreatedAt(LocalDateTime.now());
+        tenant.setActive(true);
         return tenantRepository.save(tenant);
     }
 
@@ -47,8 +54,11 @@ public class TenantService {
         return tenantRepository.save(tenant);
     }
 
-    public void delete(Long id) {
-        tenantRepository.deleteById(id);
+    public Tenant delete(Long id) {
+        Tenant tenant = tenantRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tenant com " + id + " não encontrado."));
+        tenantRepository.deleteById(tenant.getId());
+        return tenant;
     }
 
 }
