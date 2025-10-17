@@ -1,6 +1,7 @@
 package ThinkDesk.Domain.Services;
 
 import ThinkDesk.Application.DTOs.UserRequestDto;
+import ThinkDesk.Domain.Models.Role;
 import ThinkDesk.Domain.Models.Tenant;
 import ThinkDesk.Domain.Models.User;
 import ThinkDesk.Domain.Repositories.UserRepository;
@@ -15,16 +16,20 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final TenantService tenantService;
+    private final RoleService roleService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, TenantService tenantService) {
+
+    public UserService(UserRepository userRepository, UserMapper userMapper, TenantService tenantService, RoleService roleService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.tenantService = tenantService;
+        this.roleService = roleService;
     }
 
     public User create(UserRequestDto userDto) {
         User user = userMapper.toEntity(userDto);
         Tenant tenant = tenantService.getById(userDto.tenantId());
+        Role role = roleService.getById(userDto.roleId());
         user.setTenant(tenant);
         return userRepository.save(user);
     }
