@@ -8,13 +8,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class TranslationService {
 
-    @Autowired
-    private GeminiApiClient geminiApiClient;
+    private final GeminiApiClient geminiApiClient;
+
+    public TranslationService(GeminiApiClient geminiApiClient) {
+        this.geminiApiClient = geminiApiClient;
+    }
 
     public String translate(String text) {
         GeminiResponseDTO response = geminiApiClient.translate(text);
-        if (response != null && response.getCandidates() != null && !response.getCandidates().isEmpty()) {
-            return response.getCandidates().get(0).getContent().getParts().get(0).getText();
+        if (response != null && response.message() != null && !response.message().isEmpty()) {
+            return response.message();
         }
         return "Translation not available";
     }

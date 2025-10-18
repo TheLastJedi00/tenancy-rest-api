@@ -1,28 +1,45 @@
 package ThinkDesk.Infra.Gemini;
 
-import ThinkDesk.Infra.Gemini.DTO.GeminiRequestDTO;
 import ThinkDesk.Infra.Gemini.DTO.GeminiResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
+import com.google.genai.Client;
+import com.google.genai.types.GenerateContentResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 @Component
 public class GeminiApiClient {
 
-    @Value("${gemini.api.key}")
-    private String apiKey;
+    private final Client geminiClient;
 
-    @Value("${gemini.api.url}")
-    private String apiUrl;
+    @Value("${gemini.api.model}")
+    private String modelName;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    public GeminiApiClient(Client geminiClient) {
+        this.geminiClient = geminiClient;
+    }
 
     public GeminiResponseDTO translate(String text) {
-        String url = apiUrl + "?key=" + apiKey;
-        GeminiRequestDTO request = new GeminiRequestDTO(
+        String prompt =
                 "Se esse chamado estiver muito técnico, traduza os termos técnicos para se tornar mais compreensível, " +
-                        "se caso estiver muito vago avalie e encontre alguma lógica. " +
-                        "Em ambos os casos descreva como proceder para atender esse chamado: " + text);
-        return restTemplate.postForObject(url, request, GeminiResponseDTO.class);
+                "se caso estiver muito vago avalie e encontre alguma lógica. " +
+                "Em ambos os casos descreva como proceder para atender esse chamado: " + text;
+
+        try {
+            GenerateContentResponse response = this.geminiClient.models.generateContent(
+                    modelName,
+                    prompt,
+                    null
+            );
+
+            String responseText = response.text();
+
+            return new GeminiResponseDTO(responseText);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao chamar a API do Gemini: " + e.getMessage(), e);
+        }
     }
+
 }
