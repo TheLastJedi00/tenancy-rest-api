@@ -2,6 +2,7 @@ package ThinkDesk.Domain.Services;
 
 import ThinkDesk.Application.DTOs.CategoryDto;
 import ThinkDesk.Domain.Models.Category;
+import ThinkDesk.Domain.Models.Tenant;
 import ThinkDesk.Domain.Repositories.CategoryRepository;
 import ThinkDesk.Infra.Mapper.CategoryMapper;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,8 @@ public class CategoryService {
         this.tenantService = tenantService;
     }
 
-    public Category create(CategoryDto data){
-        Category category = categoryMapper.toEntity(data);
-        category.setTenant(tenantService.getById(data.tenantId()));
+    public Category create(CategoryDto categoryDto, Tenant tenant) {
+        Category category = new Category(categoryDto, tenant);
         return categoryRepository.save(category);
     }
 

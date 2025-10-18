@@ -1,19 +1,25 @@
 package ThinkDesk.Domain.Models;
+import ThinkDesk.Application.DTOs.UserKeysDto;
+import ThinkDesk.Application.DTOs.UserRequestDto;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User implements UserDetails {
 
     @Id
@@ -39,12 +45,21 @@ public class User implements UserDetails {
     private Tenant tenant;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Role> role;
+    private Set<Role> role = new HashSet<>();
+
+    public User(UserRequestDto data, UserKeysDto keys) {
+        this.name = data.name();
+        this.email = data.email();
+        this.password = data.password();
+        this.position = data.position();
+        this.tenant = keys.tenant();
+        this.role.add(keys.role());
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.role.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRole()))
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
     }
 

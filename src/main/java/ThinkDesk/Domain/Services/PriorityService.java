@@ -2,24 +2,20 @@ package ThinkDesk.Domain.Services;
 
 import ThinkDesk.Application.DTOs.PriorityDto;
 import ThinkDesk.Domain.Models.Priority;
+import ThinkDesk.Domain.Models.Tenant;
 import ThinkDesk.Domain.Repositories.PriorityRepository;
-import ThinkDesk.Infra.Mapper.PriorityMapper;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PriorityService {
     private final PriorityRepository priorityRepository;
-    private final PriorityMapper priorityMapper;
 
-    public PriorityService(PriorityRepository priorityRepository, PriorityMapper priorityMapper) {
+    public PriorityService(PriorityRepository priorityRepository) {
         this.priorityRepository = priorityRepository;
-        this.priorityMapper = priorityMapper;
     }
 
-    public Priority create(PriorityDto priorityDto){
-        return priorityRepository.save(priorityMapper.toEntity(priorityDto));
+    public Priority create(PriorityDto data, Tenant tenant){
+        return priorityRepository.save(new Priority(data, tenant));
     }
 
     public Priority getById(Long id) {

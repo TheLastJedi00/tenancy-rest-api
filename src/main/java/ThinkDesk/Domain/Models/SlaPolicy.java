@@ -5,10 +5,14 @@ import ThinkDesk.Application.DTOs.SlaPolicyKeysDto;
 import ThinkDesk.Domain.Models.Enums.TicketCategory;
 import ThinkDesk.Domain.Models.Enums.TicketPriority;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SlaPolicy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

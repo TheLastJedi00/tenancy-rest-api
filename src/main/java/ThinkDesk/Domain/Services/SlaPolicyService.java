@@ -1,8 +1,12 @@
 package ThinkDesk.Domain.Services;
 
+import ThinkDesk.Application.DTOs.CategoryDto;
 import ThinkDesk.Application.DTOs.SlaPolicyDTO;
 import ThinkDesk.Application.DTOs.SlaPolicyKeysDto;
+import ThinkDesk.Domain.Models.Category;
+import ThinkDesk.Domain.Models.Priority;
 import ThinkDesk.Domain.Models.SlaPolicy;
+import ThinkDesk.Domain.Models.Tenant;
 import ThinkDesk.Domain.Repositories.SlaPolicyRepository;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
@@ -40,14 +44,16 @@ public class SlaPolicyService {
     }
 
     public SlaPolicy create(SlaPolicyDTO data) {
+        Tenant tenant = tenantService.getById(data.tenantId());
         SlaPolicyKeysDto keys = new SlaPolicyKeysDto(
-                tenantService.getById(data.tenantId()),
-                categoryService.create(data.categoryDto()),
-                priorityService.create(data.priorityDto())
+                tenant,
+                categoryService.create(data.categoryDto(), tenant),
+                priorityService.create(data.priorityDto(), tenant)
         );
         SlaPolicy slaPolicy = new SlaPolicy(data, keys);
         return slaPolicyRepository.save(slaPolicy);
     }
+
     public Page<SlaPolicy> getAll(Pageable pageable) {
         return slaPolicyRepository.findAll(pageable);
     }

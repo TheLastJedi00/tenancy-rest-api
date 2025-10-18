@@ -1,13 +1,14 @@
 package ThinkDesk.Domain.Services;
 
+import ThinkDesk.Application.DTOs.UserKeysDto;
 import ThinkDesk.Application.DTOs.UserRequestDto;
-import ThinkDesk.Domain.Models.Role;
-import ThinkDesk.Domain.Models.Tenant;
 import ThinkDesk.Domain.Models.User;
 import ThinkDesk.Domain.Repositories.UserRepository;
 import ThinkDesk.Infra.Mapper.UserMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -27,10 +28,13 @@ public class UserService {
     }
 
     public User create(UserRequestDto userDto) {
-        User user = userMapper.toEntity(userDto);
-        Tenant tenant = tenantService.getById(userDto.tenantId());
-        Role role = roleService.getById(userDto.roleId());
-        user.setTenant(tenant);
+        if (userRepository.findUserByEmail(userDto.email()) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Um usuário com o e-mail '" + userDto.email() + "' já existe.");
+        }
+        UserKeysDto keys = new UserKeysDto(
+                tenantService.getById(userDto.tenantId()),
+                roleService.getById(userDto.roleId()));
+        User user = new User(userDto, keys);
         return userRepository.save(user);
     }
 
@@ -58,4 +62,3 @@ public class UserService {
 
     }
 }
-

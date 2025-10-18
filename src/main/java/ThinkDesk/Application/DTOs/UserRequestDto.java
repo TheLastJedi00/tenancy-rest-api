@@ -5,7 +5,6 @@ public record UserRequestDto(
         String email,
         String password,
         String position,
-        boolean active,
         Long tenantId,
         Long roleId
 )

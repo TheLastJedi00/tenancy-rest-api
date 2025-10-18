@@ -28,7 +28,7 @@ public class RoleService {
     }
 
     public Role getByName(String name){
-        return roleRepository.findByRole(name);
+        return roleRepository.findByName(name);
     }
 
     public List<Role> getAll(){
@@ -37,7 +37,7 @@ public class RoleService {
 
     public Role update(Long id, RoleDto data){
         Role role = roleRepository.findById(id).orElseThrow(() -> new RuntimeException("Role not found"));
-        role.setRole(data.role());
+        role.setName(data.name());
         return roleRepository.save(role);
     }
 
