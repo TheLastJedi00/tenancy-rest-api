@@ -1,6 +1,7 @@
 package ThinkDesk.Domain.Models;
 import ThinkDesk.Application.DTOs.UserKeysDto;
 import ThinkDesk.Application.DTOs.UserRequestDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ public class User implements UserDetails {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     private String position;

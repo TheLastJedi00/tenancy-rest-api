@@ -5,6 +5,7 @@ import ThinkDesk.Application.DTOs.TechnicianKeysDto;
 import ThinkDesk.Application.DTOs.TechnicianUpdateDto;
 import ThinkDesk.Domain.Models.Enums.TechnicianLevel;
 import ThinkDesk.Domain.Services.TechnicianService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class Technician implements UserDetails {
     private String name;
     @Column(unique = true)
     private String email;
+    @JsonIgnore
     private String password;
     private TechnicianLevel level;
     private boolean active = true;
