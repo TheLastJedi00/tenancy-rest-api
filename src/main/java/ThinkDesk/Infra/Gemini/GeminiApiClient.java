@@ -36,9 +36,9 @@ public class GeminiApiClient {
 
             String responseText = response.text();
 
-            if (responseText.length() > 255) {
-                responseText = responseText.substring(0, 255);
-            }
+//            if (responseText.length() > 255) {
+//                responseText = responseText.substring(0, 255);
+//            }
 
             return new GeminiResponseDTO(responseText);
 
