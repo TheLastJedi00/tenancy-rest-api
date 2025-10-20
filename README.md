@@ -144,8 +144,7 @@ A autenticação é necessária para a maioria dos endpoints e é feita através
       "name": "Técnico N1",
       "email": "tecnico@exemplo.com",
       "password": "password123",
-      "level": "L1",
-      "tenantId": 1
+      "level": "L1"
     }
     ```
   - **Response (201 Created):** Retorna o objeto do técnico criado.
@@ -160,7 +159,14 @@ A autenticação é necessária para a maioria dos endpoints e é feita através
 
 - **`PUT /technicians/{id}`**
   - **Descrição:** Atualiza um técnico.
-  - **Request Body:** (Mesma estrutura do `POST`)
+  - **Request Body:**
+    ```json
+    {
+      "name": "Técnico N1",
+      "email": "tecnico@exemplo.com",
+      "level": "L2"
+    }
+    ```
   - **Response (200 OK):** Retorna o objeto `Technician` atualizado.
 
 - **`DELETE /technicians/{id}`**
@@ -226,13 +232,12 @@ A autenticação é necessária para a maioria dos endpoints e é feita através
     {
       "title": "Impressora não funciona",
       "description": "A impressora do 2º andar parou de funcionar.",
-      "resolutionDueDate": "2024-10-28T18:00:00",
       "ticketType": "INCIDENT",
-      "category": 1,      // ID de uma categoria existente
-      "technician": 1,    // ID de um técnico
-      "tenant": 1,        // ID do tenant
-      "requester": 2,     // ID do usuário que abriu o ticket
-      "priority": 3       // ID de uma prioridade existente
+      "category": 1,
+      "technician": 1,
+      "tenant": 1,
+      "requester": 2,
+      "priority": 3
     }
     ```
   - **Response (201 Created):**
@@ -262,7 +267,19 @@ A autenticação é necessária para a maioria dos endpoints e é feita através
 
 - **`PUT /tickets/{id}`**
   - **Descrição:** Atualiza um ticket.
-  - **Request Body:** (Mesma estrutura do `POST`)
+  - **Request Body:**
+     ```json
+    {
+      "title": "Impressora não funciona",
+      "description": "A impressora do 2º andar parou de funcionar.",
+      "ticketType": "INCIDENT",
+      "category": 1,
+      "technician": 1,
+      "tenant": 1,
+      "requester": 2,
+      "priority": 3
+    }
+    ```
   - **Response (200 OK):** Retorna o objeto `Ticket` atualizado.
 
 - **`DELETE /tickets/{id}`**
